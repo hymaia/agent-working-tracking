@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "agent-tracking"
+version = "0.1.0"
+description = "A software project for agent tracking"
+authors = ["Your Name <you@example.com>"]
+readme = "README.md"
+packages = [{include = "agent_tracking", from = "src"}]
+
+[tool.poetry.dependencies]
+python = "^3.9"
+
+# dependencies for code analysis and UML generation
+# we keep builtins to avoid heavy extras, XML is constructed manually
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+black = "^23.7.0"
+ruff = "^0.1.0"
+mypy = "^1.5.0"
+
+[tool.poetry.scripts]
+agent-tracking = "agent_tracking.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
