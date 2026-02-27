@@ -110,6 +110,40 @@ The hook includes:
 - **Timestamped diagrams** for version tracking
 - **Callback registration** for custom handling
 
+### Repository Hook Configuration (recommended)
+
+Add the following JSON file to the repository at `.github/hooks/tracking-flow-code.json` to enable automated diagram generation when repository code structure changes. Place the file in the `.github/hooks` folder and ensure hooks are installed (copying into `.git/hooks/` or using your project's hook manager).
+
+Example `tracking-flow-code.json`:
+
+```jsonc
+{
+    "hooks": {
+        "Stop": [
+            {
+                "type": "command",
+                "command": "sh $(find ~ -name generate-diagrams.sh -path '*/agent-tracking/*' | head -n 1)",
+                "description": "Generate UML diagram when code structure changes",
+                "enabled": true
+            },
+            {
+                "type": "command",
+                "command": "echo 'HOOK TEST' > test_hook.txt",
+                "description": "Simple test",
+                "enabled": true
+            }
+
+        ]
+    }
+}
+```
+
+Instructions for new developers:
+
+- Add the file to `.github/hooks/tracking-flow-code.json` in the project.
+- Install repository hooks (for example, copy or symlink the JSON into `.git/hooks/` or run a provided installer) so your local Git invokes the hook scripts on commit.
+- To test the hook locally, make a small change, commit it, and verify the command runs and generates/updates files in `diagrams/`.
+
 ### Viewing the Diagram
 
 1. Open [draw.io](https://app.diagrams.net/).
