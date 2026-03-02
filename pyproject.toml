@@ -9,7 +9,11 @@ packages = [{include = "agent_tracking", from = "src"}]
 [tool.poetry.dependencies]
 python = "^3.9"
 
-# dependencies for code analysis and UML generation
+# dependencies for code analysis, UML generation and visualization
+pandas = "^2.1"
+matplotlib = "^3.8"
+seaborn = "^0.13"
+
 # we keep builtins to avoid heavy extras, XML is constructed manually
 
 [tool.poetry.group.dev.dependencies]

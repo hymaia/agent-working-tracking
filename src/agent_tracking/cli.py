@@ -8,6 +8,11 @@ from pathlib import Path
 from .analysis import analyze_path
 from .uml import generate_drawio_xml
 from .analysis import AnalysisHook
+from .visualization import (
+    generate_hotspot_scatter,
+    generate_quality_radar,
+    generate_evolution_dual_axis,
+)
 
 
 def analyze_codebase(
@@ -46,37 +51,70 @@ def analyze_codebase(
 
 
 def main() -> int:
-    """Main CLI entry point."""
+    """Main CLI entry point with subcommands for analysis and visualization."""
     import argparse
 
     parser = argparse.ArgumentParser(
-        description="Analyze Python codebase and generate UML diagrams")
-    parser.add_argument(
+        description="Agent Tracking CLI tool"
+    )
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # analyze subcommand
+    analyze_parser = subparsers.add_parser(
+        "analyze", help="Analyze codebase and generate UML diagrams"
+    )
+    analyze_parser.add_argument(
         "--source",
         type=Path,
         default=Path("src"),
-        help="Source hhh directory to analyze (default: src)",
+        help="Source directory to analyze (default: src)",
     )
-    parser.add_argument(
+    analyze_parser.add_argument(
         "--output",
         type=Path,
         default=Path("diagrams"),
         help="Output directory for diagrams (default: diagrams)",
     )
-    parser.add_argument(
+    analyze_parser.add_argument(
         "-v", "--verbose",
         action="store_true",
         help="Verbose output",
     )
 
+    # visualize subcommand
+    viz_parser = subparsers.add_parser(
+        "visualize", help="Generate codebase health visualizations"
+    )
+    viz_parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path(".").resolve(),
+        help="Directory where images will be written",
+    )
+    viz_parser.add_argument(
+        "--no-show",
+        action="store_true",
+        help="Do not display plots interactively",
+    )
+
     args = parser.parse_args()
 
     try:
-        classes, output_path = analyze_codebase(
-            args.source, args.output, verbose=args.verbose
-        )
-        if args.verbose:
-            print(f"✓ Analysis complete. Diagram: {output_path}")
+        if args.command == "analyze":
+            classes, output_path = analyze_codebase(
+                args.source, args.output, verbose=args.verbose
+            )
+            if args.verbose:
+                print(f"✓ Analysis complete. Diagram: {output_path}")
+        elif args.command == "visualize":
+            outdir = args.output_dir
+            outdir.mkdir(parents=True, exist_ok=True)
+            generate_hotspot_scatter(
+                save_path=outdir / "hotspots.png", show=not args.no_show)
+            generate_quality_radar(
+                save_path=outdir / "quality.png", show=not args.no_show)
+            generate_evolution_dual_axis(
+                save_path=outdir / "evolution.png", show=not args.no_show)
         return 0
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)

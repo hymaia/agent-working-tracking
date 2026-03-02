@@ -122,7 +122,7 @@ Example `tracking-flow-code.json`:
         "Stop": [
             {
                 "type": "command",
-                "command": "sh $(find ~ -name generate-diagrams.sh -path '*/agent-tracking/*' | head -n 1)",
+                "command": "cd \"$(git rev-parse --show-toplevel)\" && poetry run agent-tracking analyze --source src --output diagrams -v",
                 "description": "Generate UML diagram when code structure changes",
                 "enabled": true
             },
@@ -143,6 +143,44 @@ Instructions for new developers:
 - Add the file to `.github/hooks/tracking-flow-code.json` in the project.
 - Install repository hooks (for example, copy or symlink the JSON into `.git/hooks/` or run a provided installer) so your local Git invokes the hook scripts on commit.
 - To test the hook locally, make a small change, commit it, and verify the command runs and generates/updates files in `diagrams/`.
+
+### Visualization Utilities
+
+Beyond generating UML diagrams, the library can produce a set of
+plots that give a high-level health overview of a codebase. These
+charts currently use simulated data but are designed so that a real
+backend (SonarQube, Git analytics, etc.) can populate a DataFrame later.
+
+Example usage from Python:
+
+```python
+from agent_tracking import (
+    generate_hotspot_scatter,
+    generate_quality_radar,
+    generate_evolution_dual_axis,
+)
+
+# each function accepts an optional DataFrame and/or save path
+# and returns nothing; they display and/or save a figure.
+
+generate_hotspot_scatter(save_path="hotspots.png")
+generate_quality_radar(save_path="quality.png")
+generate_evolution_dual_axis(save_path="evolution.png")
+```
+
+You can also use the same CLI with a `visualize` subcommand to produce all three images at once:
+
+```bash
+# after installing dependencies via poetry
+poetry run agent-tracking visualize --output-dir diagrams/figs
+```
+
+The `--no-show` flag suppresses interactive display (useful in CI).
+
+The first chart is a **hotspot scatter** (churn vs complexity), the
+second a **radar chart** comparing maintenability, coverage, security,
+reliability and documentation, and the third shows the **evolution over
+12 months** of test coverage and technical debt.
 
 ### Viewing the Diagram
 

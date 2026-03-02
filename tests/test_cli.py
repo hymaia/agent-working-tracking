@@ -51,6 +51,22 @@ def test_analyze_codebase(tmp_path: Path) -> None:
     assert "AnotherClass" in content
 
 
+def test_cli_visualize(tmp_path: Path, monkeypatch) -> None:
+    """Test the CLI visualize subcommand writes output files."""
+    dest = tmp_path / "figs"
+    monkeypatch.chdir(tmp_path)
+    # simulate arguments
+    monkeypatch.setattr("sys.argv", [
+                        "agent-tracking", "visualize", "--output-dir", str(dest), "--no-show"])
+    from agent_tracking import cli
+
+    result = cli.main()
+    assert result == 0
+    assert (dest / "hotspots.png").exists()
+    assert (dest / "quality.png").exists()
+    assert (dest / "evolution.png").exists()
+
+
 def test_analyze_codebase_empty_directory(tmp_path: Path) -> None:
     """Test analysis of directory with no classes."""
     src_dir = tmp_path / "src"
