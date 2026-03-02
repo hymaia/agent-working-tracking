@@ -5,9 +5,7 @@ from .uml import generate_drawio_xml
 from .analysis import AnalysisHook
 from .cli import analyze_codebase
 from .visualization import (
-    generate_hotspot_scatter,
-    generate_quality_radar,
-    generate_evolution_dual_axis,
+    generate_hotspot_scatter
 )
 
 __version__ = "0.1.0"
@@ -18,7 +16,5 @@ __all__ = [
     "generate_drawio_xml",
     "AnalysisHook",
     "analyze_codebase",
-    "generate_hotspot_scatter",
-    "generate_quality_radar",
-    "generate_evolution_dual_axis",
+    "generate_hotspot_scatter"
 ]
