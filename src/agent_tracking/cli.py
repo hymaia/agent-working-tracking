@@ -88,7 +88,7 @@ def main() -> int:
     viz_parser.add_argument(
         "--output-dir",
         type=Path,
-        default=Path(".").resolve(),
+        default=Path("visualizations"),
         help="Directory where images will be written",
     )
     viz_parser.add_argument(
