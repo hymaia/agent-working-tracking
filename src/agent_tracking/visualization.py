@@ -1,5 +1,4 @@
 from typing import Optional
-import os
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
@@ -16,8 +15,11 @@ def analyze_local_codebase(path: str = ".") -> pd.DataFrame:
     results = []
 
     # On ne scanne que les fichiers Python qui ne sont pas dans des dossiers cachés ou venv
-    files = [f for f in project_dir.rglob("*.py")
-             if not any(part.startswith('.') or part == 'venv' for part in f.parts)]
+    files = [
+        f
+        for f in project_dir.rglob("*.py")
+        if not any(part.startswith(".") or part == "venv" for part in f.parts)
+    ]
 
     for file_path in files:
         relative_path = file_path.relative_to(project_dir)
@@ -27,8 +29,9 @@ def analyze_local_codebase(path: str = ".") -> pd.DataFrame:
             code = f.read()
             try:
                 visitor = ComplexityVisitor.from_code(code)
-                complexity = sum([m.complexity for m in visitor.functions + visitor.classes]) / (
-                    len(visitor.functions + visitor.classes) or 1)
+                complexity = sum(
+                    [m.complexity for m in visitor.functions + visitor.classes]
+                ) / (len(visitor.functions + visitor.classes) or 1)
                 loc = len(code.splitlines())
             except:
                 continue  # Ignore les fichiers avec erreurs de syntaxe
@@ -41,20 +44,20 @@ def analyze_local_codebase(path: str = ".") -> pd.DataFrame:
         except:
             churn = 0
 
-        results.append({
-            "filename": str(relative_path),
-            "churn": churn,
-            "complexity": complexity,
-            "loc": loc
-        })
+        results.append(
+            {
+                "filename": str(relative_path),
+                "churn": churn,
+                "complexity": complexity,
+                "loc": loc,
+            }
+        )
 
     return pd.DataFrame(results)
 
 
 def generate_hotspot_scatter(
-    df: pd.DataFrame,
-    save_path: Optional[Path | str] = None,
-    show: bool = True
+    df: pd.DataFrame, save_path: Optional[Path | str] = None, show: bool = True
 ):
     """
     Affiche la matrice de risque et permet l'export en image.
@@ -73,32 +76,35 @@ def generate_hotspot_scatter(
         c=df["complexity"],
         cmap="Reds",
         alpha=0.6,
-        edgecolors="w"
+        edgecolors="w",
     )
 
     # Identification des fichiers critiques (Top 5)
-    top_risk = df.sort_values(
-        by=["churn", "complexity"], ascending=False).head(5)
+    top_risk = df.sort_values(by=["churn", "complexity"], ascending=False).head(5)
     for _, row in top_risk.iterrows():
-        plt.text(row["churn"], row["complexity"],
-                 row["filename"], fontsize=9, fontweight='bold')
+        plt.text(
+            row["churn"],
+            row["complexity"],
+            row["filename"],
+            fontsize=9,
+            fontweight="bold",
+        )
 
     # Lignes de démarcation (médianes) pour créer les quadrants
-    plt.axhline(df["complexity"].median(),
-                color='gray', linestyle='--', alpha=0.5)
-    plt.axvline(df["churn"].median(), color='gray', linestyle='--', alpha=0.5)
+    plt.axhline(df["complexity"].median(), color="gray", linestyle="--", alpha=0.5)
+    plt.axvline(df["churn"].median(), color="gray", linestyle="--", alpha=0.5)
 
     plt.title("Analyse des Hotspots (Réel)", fontsize=15)
     plt.xlabel("Nombre de modifications (Churn Git)")
     plt.ylabel("Complexité Cyclomatique Moyenne")
-    plt.colorbar(scatter, label='Intensité de complexité')
+    plt.colorbar(scatter, label="Intensité de complexité")
 
     # Gestion de l'export
     if save_path:
         # ensure_ascii=False n'est pas nécessaire ici, mais bbox_inches='tight'
         # permet d'éviter que les labels soient coupés
-        plt.savefig(save_path, bbox_inches='tight', dpi=300)
-        print(f"📊 Graphique sauvegardé sous : {save_path}")
+        plt.savefig(save_path, bbox_inches="tight", dpi=300)
+        print(f"Graphique sauvegardé sous : {save_path}")
 
     if show:
         plt.show()

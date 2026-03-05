@@ -25,7 +25,7 @@ poetry install
 ### Running the Application
 
 ```bash
-poetry run python -m agent_tracking
+bash generate-diagrams.sh
 ```
 
 ### Running Tests
@@ -46,10 +46,6 @@ Lint with Ruff:
 poetry run ruff check .
 ```
 
-Type checking with MyPy:
-```bash
-poetry run mypy src/
-```
 
 ## Code Analysis & UML Generation
 
@@ -69,48 +65,13 @@ Options:
 - `--output`: Output directory for diagrams (default: `diagrams`)
 - `-v, --verbose`: Show detailed analysis output
 
-### Programmatic Usage
 
-```python
-from pathlib import Path
-from agent_tracking import analyze_codebase
-
-classes, diagram_path = analyze_codebase(
-    source_path=Path("src/agent_tracking"),
-    output_dir=Path("diagrams"),
-    verbose=True
-)
-```
 
 ### Hook Configuration for Auto-Analysis
 
-Set up automatic diagram generation on code changes:
+Set up automatic diagram generation on code changes.
 
-```python
-from pathlib import Path
-from agent_tracking import AnalysisHook, analyze_codebase
-
-def on_code_change(results: dict) -> None:
-    """Callback triggered when code changes are detected."""
-    print(f"Diagram updated: {results}")
-
-hook = AnalysisHook(
-    root_path=Path("src"),
-    output_dir=Path("diagrams")
-)
-hook.register_callback(on_code_change)
-
-# When code changes, trigger analysis
-classes, diagram_path = analyze_codebase(Path("src"), Path("diagrams"))
-hook.trigger_analysis({"classes": len(classes), "diagram": str(diagram_path)})
-```
-
-The hook includes:
-- **Automatic throttling** to prevent excessive re-analysis
-- **Timestamped diagrams** for version tracking
-- **Callback registration** for custom handling
-
-### Repository Hook Configuration (recommended)
+## Repository Hook Configuration (recommended)
 
 Add the following JSON file to the repository at `.github/hooks/tracking-flow-code.json` to enable automated diagram generation when repository code structure changes. Place the file in the `.github/hooks` folder and ensure hooks are installed (copying into `.git/hooks/` or using your project's hook manager).
 
@@ -188,6 +149,16 @@ reliability and documentation, and the third shows the **evolution over
 2. Choose **File → Import From → Device** and select the `.drawio` file written to `diagrams/`.
 3. Arrange or edit the boxes as needed. The exported XML is minimal, and you can add connectors manually if desired.
 
+### Explication complexité cyclomatique
+
+La complexité cyclomatique (en anglais cyclomatic complexity) est une mesure utilisée en génie logiciel pour évaluer la complexité d’un programme en fonction du nombre de chemins logiques indépendants dans son code.
+
+```M=E−N+2P```
+où :
+    ** M = complexité cyclomatique
+    **E = nombre d’arêtes (edges) dans le graphe
+    **N = nombre de nœuds (nodes)
+    **P = nombre de composants connectés (souvent 1 pour une fonction)
 ## Project Structure
 
 ```

@@ -56,8 +56,10 @@ def test_cli_visualize(tmp_path: Path, monkeypatch) -> None:
     dest = tmp_path / "figs"
     monkeypatch.chdir(tmp_path)
     # simulate arguments
-    monkeypatch.setattr("sys.argv", [
-                        "agent-tracking", "visualize", "--output-dir", str(dest), "--no-show"])
+    monkeypatch.setattr(
+        "sys.argv",
+        ["agent-tracking", "visualize", "--output-dir", str(dest), "--no-show"],
+    )
     from agent_tracking import cli
 
     result = cli.main()
