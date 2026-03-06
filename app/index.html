@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Agrent working tracking</title>
+
+<link rel="stylesheet" href="/static/style.css">
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+
+<h1>Cyclomatic and git churn graph</h1>
+
+<canvas id="hotspotChart"></canvas>
+
+<hr>
+
+<h1>Interaction Graph</h1>
+
+<div>
+  {{ graph_html | safe }}
+</div>
+
+
+<!-- injection des données envoyées par FastAPI -->
+<script>
+window.metrics = {{ metrics | tojson | safe }};
+</script>
+
+<script src="/static/app.js" defer></script>
+
+</body>
+</html>

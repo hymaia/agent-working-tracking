@@ -7,7 +7,7 @@ readme = "README.md"
 packages = [{include = "agent_tracking", from = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.11"
 
 # dependencies for code analysis, UML generation and visualization
 pandas = "^2.1"
@@ -18,6 +18,8 @@ seaborn = "^0.13"
 gitpython = "^3.1.46"
 radon = "^6.0.1"
 pyvis = "^0.3.2"
+fastapi = "^0.135.1"
+uvicorn = "^0.41.0"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

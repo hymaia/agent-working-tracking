@@ -50,7 +50,12 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
         print("Aucun fichier Python trouvé.")
         return 1
 
-    generate_hotspot_scatter(df_real, save_path=output_dir / "hotspots.png", show=show)
+    # sauver dataset
+    json_file = output_dir / "metrics.json"
+    df_real.to_json(json_file, orient="records")
+
+    generate_hotspot_scatter(
+        df_real, save_path=output_dir / "hotspots.png", show=show)
 
     print(f"Graphiques sauvegardés dans {output_dir}")
     return 0
@@ -130,13 +135,15 @@ def main() -> int:
     # --- map ---
     map_cmd = sub.add_parser("map", help="Carte interactions projet")
     map_cmd.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
-    map_cmd.add_argument("--output-dir", type=Path, default=Path("visualizations"))
+    map_cmd.add_argument("--output-dir", type=Path,
+                         default=Path("visualizations"))
 
     args = parser.parse_args()
 
     try:
         if args.command == "analyze":
-            analyze_codebase(args.source, ensure_dir(args.output), args.verbose)
+            analyze_codebase(args.source, ensure_dir(
+                args.output), args.verbose)
 
         elif args.command == "visualize":
             return run_visualize(args.source, args.output_dir, show=not args.no_show)
