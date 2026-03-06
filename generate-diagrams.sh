@@ -23,7 +23,7 @@ echo
 # -----------------------------
 # UML ANALYSIS
 # -----------------------------
-echo "🔍 Analyse UML..."
+echo "Analyse UML..."
 poetry -C "$PROJECT_ROOT" run agent-tracking analyze \
     --source "$SRC" \
     --output "$DIAGRAMS" \
@@ -34,7 +34,7 @@ echo
 # récupérer le dernier diagramme généré
 LATEST_DIAGRAM=$(ls -t "$DIAGRAMS"/*.drawio | head -n 1)
 
-echo "🖼 Conversion du diagramme UML en PNG..."
+echo "Conversion du diagramme UML en PNG..."
 poetry -C "$PROJECT_ROOT" run agent-tracking inspect \
     "$LATEST_DIAGRAM" \
     --png \
@@ -45,7 +45,7 @@ echo
 # -----------------------------
 # CODE HEALTH VISUALIZATION
 # -----------------------------
-echo "📊 Génération des hotspots..."
+echo "Génération des hotspots..."
 poetry -C "$PROJECT_ROOT" run agent-tracking visualize \
     --source "$SRC_GIT" \
     --output-dir "$VISUALS"
@@ -61,4 +61,4 @@ poetry -C "$PROJECT_ROOT" run agent-tracking map \
     --output-dir "$VISUALS"
 
 echo
-echo "✅ Analyse terminée"
+echo "Analyse terminée"

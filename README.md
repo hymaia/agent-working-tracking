@@ -1,6 +1,6 @@
 # Agent Tracking
 
-A Python software project for agent tracking.
+A Python software project for agent tracking. The goal is to display all changements done by agent code assistant.
 
 ## Getting Started
 
