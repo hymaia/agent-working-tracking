@@ -8,7 +8,7 @@ A Python software project for agent tracking. The goal is to display all changem
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/hymaia/agent-working-tracking.git
 cd agent-tracking
 pip install poetry
 ```
