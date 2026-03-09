@@ -1,108 +1,68 @@
 function loadMetrics() {
-
-  console.log("Loading metrics...")
-
-  const data = window.metrics || []
-
+  console.log("Loading metrics...");
+  const data = window.metrics || [];
   if (!Array.isArray(data) || !data.length) {
-    console.warn("No metrics to display")
-    return
+    console.warn("No metrics to display");
+    return;
   }
 
-  console.log("Using server injected metrics:", data.length)
-
-  // transformation des données
   const dataset = data.map(d => ({
-    x: Number(d.churn) || 0,          // nombre de modifications
-    y: Number(d.complexity) || 0,     // complexité
+    x: Number(d.churn) || 0,
+    y: Number(d.complexity) || 0,
     filename: d.filename,
     loc: d.loc
-  }))
+  }));
 
-  const ctx = document.getElementById("hotspotChart")
-
-  if (!ctx) {
-    console.error("Canvas hotspotChart not found")
-    return
-  }
+  const ctx = document.getElementById("hotspotChart");
+  if (!ctx) { console.error("Canvas hotspotChart not found"); return; }
 
   Chart.defaults.color = "#475569";
   Chart.defaults.scale.grid.color = "rgba(0, 0, 0, 0.05)";
 
   new Chart(ctx, {
-
     type: "scatter",
-
     data: {
       datasets: [{
         label: "Value",
         data: dataset,
         pointRadius: 6,
         hoverRadius: 8,
-        backgroundColor: "rgba(59, 130, 246, 0.8)", // Blue tint
+        backgroundColor: "rgba(59, 130, 246, 0.8)",
         borderColor: "#2563eb",
         borderWidth: 1
       }]
     },
-
     options: {
-
       responsive: true,
       maintainAspectRatio: false,
-
       plugins: {
         tooltip: {
           callbacks: {
             label: (ctx) => {
-              const d = ctx.raw
-              return [
-                d.filename,
-                `Churn: ${d.x}`,
-                `Complexity: ${d.y}`,
-                `LOC: ${d.loc}`
-              ]
+              const d = ctx.raw;
+              return [d.filename, `Churn: ${d.x}`, `Complexity: ${d.y}`, `LOC: ${d.loc}`];
             }
           }
         }
       },
-
       scales: {
-
-        x: {
-          title: {
-            display: true,
-            text: "Nombre de modifications (Git Churn)"
-          }
-        },
-
-        y: {
-          title: {
-            display: true,
-            text: "Complexité cyclomatique moyenne"
-          }
-        }
-
+        x: { title: { display: true, text: "Nombre de modifications (Git Churn)" } },
+        y: { title: { display: true, text: "Complexité cyclomatique moyenne" } }
       }
-
     }
-
-  })
-
-  console.log("Chart rendered")
+  });
+  console.log("Chart rendered");
 }
 
 function loadNetwork() {
   const container = document.getElementById("interactionNetwork");
   const dataRaw = window.graphData;
-  
+
   if (!container || !dataRaw || !dataRaw.nodes || !dataRaw.edges || !dataRaw.nodes.length) {
     console.warn("No graph data to display or container missing");
     return;
   }
 
-  console.log(`Using server injected graph data: ${dataRaw.nodes.length} nodes, ${dataRaw.edges.length} edges`);
-
-  // Parse and color nodes for light theme readability
   const nodesArr = dataRaw.nodes.map(n => ({
     ...n,
     font: { color: "#1e293b", face: "Outfit" },
@@ -120,12 +80,7 @@ function loadNetwork() {
   };
 
   const options = {
-    interaction: {
-      dragNodes: true,
-      hideEdgesOnDrag: false,
-      hideNodesOnDrag: false,
-      hover: true
-    },
+    interaction: { dragNodes: true, hover: true },
     physics: {
       enabled: true,
       forceAtlas2Based: {
@@ -137,12 +92,7 @@ function loadNetwork() {
         springLength: 100
       },
       solver: "forceAtlas2Based",
-      stabilization: {
-        enabled: true,
-        fit: true,
-        iterations: 1000,
-        updateInterval: 50
-      }
+      stabilization: { enabled: true, fit: true, iterations: 1000, updateInterval: 50 }
     }
   };
 
@@ -150,5 +100,39 @@ function loadNetwork() {
   console.log("Network rendered");
 }
 
-loadMetrics()
-loadNetwork()
+function loadAgentTasks() {
+  const container = document.getElementById("taskList");
+  const data = window.agentTasks || [];
+
+  if (!container) return;
+
+  if (!data.length) {
+    container.innerHTML = '<div class="no-tasks">No tasks tracked yet.</div>';
+    return;
+  }
+
+  // Deduplication by ID (keep latest)
+  const taskMap = new Map();
+  data.forEach(task => {
+    taskMap.set(task.id, task);
+  });
+
+  const uniqueTasks = Array.from(taskMap.values()).sort((a, b) => b.id - a.id);
+
+  container.innerHTML = uniqueTasks.map(task => `
+    <div class="task-item fade-in">
+      <div class="task-meta">
+        <span class="task-id">#${task.id}</span>
+        <span class="task-date">${new Date(task.created_at).toLocaleString()}</span>
+      </div>
+      <div class="task-asked">${task.asked}</div>
+      <pre class="task-effectuated">${task.effectuated}</pre>
+    </div>
+  `).join("");
+}
+
+window.onload = () => {
+  loadMetrics();
+  loadNetwork();
+  loadAgentTasks();
+};

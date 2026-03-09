@@ -1,8 +1,10 @@
 """
-Command-line interface for code analysis, UML generation and Draw.io manipulation.
+Command-line interface for Agent-Tracking & Draw.io Toolset.
+Contains both code analysis tools and agent task logging.
 """
 
 from __future__ import annotations
+import json
 import sys
 from pathlib import Path
 import argparse
@@ -12,6 +14,7 @@ from .analysis import analyze_path
 from .uml import generate_drawio_xml, convert_drawio_to_png
 from .visualization import analyze_local_codebase, generate_hotspot_scatter
 from .network import GlobalProjectAnalyzer
+from .chat_interceptor import ChatStore, get_current_session_id
 
 
 DEFAULT_SOURCE = Path("/Users/houee/Desktop/papaga-ia/papaga-ia/papaga_ia")
@@ -103,6 +106,27 @@ def run_inspect(file: Path, outdir: Path, export_png: bool, export_xml: bool):
 
     return 0
 
+# ---------------------------------------------------------------------------
+# Agent Tracking Sync
+# ---------------------------------------------------------------------------
+
+def run_track(conv_id: str | None) -> int:
+    """Sync the latest task from task.md to the JSON record."""
+    cid = conv_id or get_current_session_id()
+    if not cid:
+        print("Error: Could not determine conversation ID. Provide --conv-id.")
+        return 1
+    
+    store = ChatStore()
+    synced = store.sync_last_task(cid)
+    if synced:
+        print(f"✅ Synced {len(synced)} new task(s).")
+        for t in synced:
+            print(f"  - {t.asked}")
+    else:
+        print("Nothing new to sync.")
+    return 0
+
 
 def main() -> int:
     parser = argparse.ArgumentParser(
@@ -138,6 +162,10 @@ def main() -> int:
     map_cmd.add_argument("--output-dir", type=Path,
                          default=Path("visualizations"))
 
+    # --- track (Agent Tracking) ---
+    track = sub.add_parser("track", help="Sync agent task progress")
+    track.add_argument("--conv-id", default=None)
+
     args = parser.parse_args()
 
     try:
@@ -154,11 +182,15 @@ def main() -> int:
         elif args.command == "inspect":
             return run_inspect(args.file, args.outdir, args.png, args.xml)
 
+        elif args.command == "track":
+            return run_track(args.conv_id)
+
         return 0
 
     except Exception as e:
         print(f"Erreur fatale : {e}", file=sys.stderr)
         return 1
+
 
 
 if __name__ == "__main__":

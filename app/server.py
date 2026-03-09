@@ -5,6 +5,10 @@ from pathlib import Path
 import json
 import logging
 import re
+import sys
+
+# Make src/ importable
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
 # -----------------------------
 # LOG CONFIG
@@ -30,10 +34,21 @@ logger.info(f"Server starting")
 logger.info(f"Base directory : {BASE_DIR}")
 logger.info(f"Metrics folder : {DATA_DIR.resolve()}")
 
+def read_env_repo_name():
+    env_file = ROOT_DIR / ".env"
+    if env_file.exists():
+        for line in env_file.read_text().splitlines():
+            if line.startswith("ANALYZED_REPO_NAME="):
+                return line.split("=", 1)[1].strip()
+    return "Unknown Project"
+
+REPO_NAME = read_env_repo_name()
+
+
 # -----------------------------
 # FASTAPI APP
 # -----------------------------
-app = FastAPI()
+app = FastAPI(title="Agent Dashboard Tracking")
 
 templates = Jinja2Templates(directory=BASE_DIR)
 
@@ -82,6 +97,18 @@ def load_metrics():
         logger.error(f"Error reading metrics: {e}")
         return []
 
+def load_agent_tasks():
+    file = DATA_DIR / "tasks-agent.json"
+    logger.info(f"Loading agent tasks from {file}")
+    if not file.exists():
+        return []
+    try:
+        data = json.loads(file.read_text())
+        return data
+    except Exception as e:
+        logger.error(f"Error reading agent tasks: {e}")
+        return []
+
 # -----------------------------
 # HOME PAGE
 # -----------------------------
@@ -92,13 +119,16 @@ def home(request: Request):
 
     metrics = load_metrics()
     graph_data = load_graph_data()
+    agent_tasks = load_agent_tasks()
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "metrics": metrics,
-            "graph_data": graph_data
+            "graph_data": graph_data,
+            "agent_tasks": agent_tasks,
+            "repo_name": REPO_NAME
         }
     )
 
