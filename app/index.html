@@ -1,36 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<meta charset="UTF-8">
-<title>Agrent working tracking</title>
-
-<link rel="stylesheet" href="/static/style.css">
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agent Working Tracking</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
 </head>
 <body>
 
-<h1>Cyclomatic and git churn graph</h1>
+  <header class="topbar">
+    <div class="topbar-content">
+      <h1>Agent Dashboard</h1>
+      <p>Working Tracking & Analysis</p>
+    </div>
+  </header>
 
-<canvas id="hotspotChart"></canvas>
+  <main class="container">
+    <section class="card fade-in">
+      <div class="card-header">
+        <h2>Cyclomatic & Git Churn Graph</h2>
+        <span class="badge">Hotspots</span>
+      </div>
+      <div class="chart-container">
+        <canvas id="hotspotChart"></canvas>
+      </div>
+    </section>
 
-<hr>
+    <section class="card fade-in" style="animation-delay: 0.1s;">
+      <div class="card-header">
+        <h2>Interaction Graph</h2>
+        <span class="badge">Dependencies</span>
+      </div>
+      <div class="chart-container">
+        <div id="interactionNetwork" style="width: 100%; height: 100%;"></div>
+      </div>
+    </section>
+  </main>
 
-<h1>Interaction Graph</h1>
-
-<div>
-  {{ graph_html | safe }}
-</div>
-
-
-<!-- injection des données envoyées par FastAPI -->
-<script>
-window.metrics = {{ metrics | tojson | safe }};
-</script>
-
-<script src="/static/app.js" defer></script>
+  <!-- Injection of data sent by FastAPI -->
+  <script>
+    window.metrics = {{ metrics | tojson | safe }};
+    window.graphData = {{ graph_data | tojson | safe }};
+  </script>
+  <script src="/static/app.js" defer></script>
 
 </body>
 </html>

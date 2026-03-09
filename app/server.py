@@ -4,6 +4,7 @@ from fastapi.templating import Jinja2Templates
 from pathlib import Path
 import json
 import logging
+import re
 
 # -----------------------------
 # LOG CONFIG
@@ -42,19 +43,25 @@ templates = Jinja2Templates(directory=BASE_DIR)
 # -----------------------------
 
 
-def load_graph_html():
-    logger.info("Loading graph HTML...")
+def load_graph_data():
+    logger.info("Loading graph data from HTML...")
 
     if GRAPH_FILE.exists():
         logger.info(f"Graph file found: {GRAPH_FILE}")
 
         content = GRAPH_FILE.read_text()
+        
+        nodes_match = re.search(r'nodes\s*=\s*new\s*vis\.DataSet\((.*?)\);', content, re.DOTALL)
+        edges_match = re.search(r'edges\s*=\s*new\s*vis\.DataSet\((.*?)\);', content, re.DOTALL)
+        
+        nodes = json.loads(nodes_match.group(1)) if nodes_match else []
+        edges = json.loads(edges_match.group(1)) if edges_match else []
 
-        logger.info("Graph HTML loaded successfully")
-        return content
+        logger.info(f"Graph data loaded successfully: {len(nodes)} nodes, {len(edges)} edges")
+        return {"nodes": nodes, "edges": edges}
 
     logger.warning(f"Graph file not found: {GRAPH_FILE}")
-    return "<p>No graph found</p>"
+    return {"nodes": [], "edges": []}
 
 
 def load_metrics():
@@ -84,14 +91,14 @@ def load_metrics():
 def home(request: Request):
 
     metrics = load_metrics()
-    graph_html = load_graph_html()
+    graph_data = load_graph_data()
 
     return templates.TemplateResponse(
         "index.html",
         {
             "request": request,
             "metrics": metrics,
-            "graph_html": graph_html
+            "graph_data": graph_data
         }
     )
 
