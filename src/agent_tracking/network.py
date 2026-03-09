@@ -64,7 +64,7 @@ class GlobalProjectAnalyzer:
                 except:
                     continue
 
-    def generate_graph(self):
+    def generate_graph(self, filename: str = "project_interaction_map.html"):
         net = Network(
             height="900px",
             width="100%",
@@ -91,7 +91,7 @@ class GlobalProjectAnalyzer:
             net.add_edge(source, target, color="#64748b")
 
         # chemin du fichier
-        output_file = self.output_dir / "project_interaction_map.html"
+        output_file = self.output_dir / filename
 
         # PyVis attend une string
         net.show(str(output_file), notebook=False)

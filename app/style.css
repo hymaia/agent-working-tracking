@@ -117,6 +117,13 @@ body {
   box-shadow: var(--shadow-sm);
 }
 
+.task-item.active {
+  border-color: var(--accent-color);
+  background: #ffffff;
+  box-shadow: var(--shadow-md);
+  border-left: 4px solid var(--accent-color);
+}
+
 .task-meta {
   display: flex;
   justify-content: space-between;

@@ -1,6 +1,9 @@
-function loadMetrics() {
+let hotspotChart = null;
+let interactionNetwork = null;
+
+function loadMetrics(providedData = null) {
   console.log("Loading metrics...");
-  const data = window.metrics || [];
+  const data = providedData || window.metrics || [];
   if (!Array.isArray(data) || !data.length) {
     console.warn("No metrics to display");
     return;
@@ -19,47 +22,55 @@ function loadMetrics() {
   Chart.defaults.color = "#475569";
   Chart.defaults.scale.grid.color = "rgba(0, 0, 0, 0.05)";
 
-  new Chart(ctx, {
-    type: "scatter",
-    data: {
-      datasets: [{
-        label: "Value",
-        data: dataset,
-        pointRadius: 6,
-        hoverRadius: 8,
-        backgroundColor: "rgba(59, 130, 246, 0.8)",
-        borderColor: "#2563eb",
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        tooltip: {
-          callbacks: {
-            label: (ctx) => {
-              const d = ctx.raw;
-              return [d.filename, `Churn: ${d.x}`, `Complexity: ${d.y}`, `LOC: ${d.loc}`];
+  if (hotspotChart) {
+    hotspotChart.data.datasets[0].data = dataset;
+    hotspotChart.update();
+  } else {
+    hotspotChart = new Chart(ctx, {
+      type: "scatter",
+      data: {
+        datasets: [{
+          label: "Value",
+          data: dataset,
+          pointRadius: 6,
+          hoverRadius: 8,
+          backgroundColor: "rgba(59, 130, 246, 0.8)",
+          borderColor: "#2563eb",
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          tooltip: {
+            callbacks: {
+              label: (ctx) => {
+                const d = ctx.raw;
+                return [d.filename, `Churn: ${d.x}`, `Complexity: ${d.y}`, `LOC: ${d.loc}`];
+              }
             }
           }
+        },
+        scales: {
+          x: { title: { display: true, text: "Nombre de modifications (Git Churn)" } },
+          y: { title: { display: true, text: "Complexité cyclomatique moyenne" } }
         }
-      },
-      scales: {
-        x: { title: { display: true, text: "Nombre de modifications (Git Churn)" } },
-        y: { title: { display: true, text: "Complexité cyclomatique moyenne" } }
       }
-    }
-  });
-  console.log("Chart rendered");
+    });
+  }
 }
 
-function loadNetwork() {
+function loadNetwork(providedData = null) {
   const container = document.getElementById("interactionNetwork");
-  const dataRaw = window.graphData;
+  const dataRaw = providedData || window.graphData;
 
   if (!container || !dataRaw || !dataRaw.nodes || !dataRaw.edges || !dataRaw.nodes.length) {
     console.warn("No graph data to display or container missing");
+    if (interactionNetwork) {
+        interactionNetwork.destroy();
+        interactionNetwork = null;
+    }
     return;
   }
 
@@ -88,6 +99,7 @@ function loadNetwork() {
         centralGravity: 0.01,
         damping: 0.4,
         gravitationalConstant: -50,
+        strokeWidth: 2,
         springConstant: 0.08,
         springLength: 100
       },
@@ -96,8 +108,34 @@ function loadNetwork() {
     }
   };
 
-  new vis.Network(container, data, options);
-  console.log("Network rendered");
+  if (interactionNetwork) {
+    interactionNetwork.setData(data);
+  } else {
+    interactionNetwork = new vis.Network(container, data, options);
+  }
+}
+
+async function selectTask(taskId, element) {
+    console.log(`Selecting task: ${taskId}`);
+    
+    // UI Feedback
+    document.querySelectorAll('.task-item').forEach(el => el.classList.remove('active'));
+    if (element) element.classList.add('active');
+
+    try {
+        const [metricsRes, graphRes] = await Promise.all([
+            fetch(`/api/metrics/${taskId}`),
+            fetch(`/api/graph/${taskId}`)
+        ]);
+
+        const metricsData = await metricsRes.json();
+        const graphData = await graphRes.json();
+
+        loadMetrics(metricsData);
+        loadNetwork(graphData);
+    } catch (e) {
+        console.error("Error fetching versioned data:", e);
+    }
 }
 
 function loadAgentTasks() {
@@ -120,7 +158,7 @@ function loadAgentTasks() {
   const uniqueTasks = Array.from(taskMap.values()).sort((a, b) => b.id - a.id);
 
   container.innerHTML = uniqueTasks.map(task => `
-    <div class="task-item fade-in">
+    <div class="task-item fade-in" onclick="selectTask(${task.id}, this)">
       <div class="task-meta">
         <span class="task-id">#${task.id}</span>
         <span class="task-date">${new Date(task.created_at).toLocaleString()}</span>

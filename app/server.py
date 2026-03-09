@@ -58,13 +58,31 @@ templates = Jinja2Templates(directory=BASE_DIR)
 # -----------------------------
 
 
-def load_graph_data():
-    logger.info("Loading graph data from HTML...")
+def get_latest_task_id_from_json() -> int | None:
+    file = DATA_DIR / "tasks-agent.json"
+    if not file.exists():
+        return None
+    try:
+        tasks = json.loads(file.read_text())
+        valid_ids = [t.get("id") for t in tasks if t.get("id") is not None]
+        return max(valid_ids) if valid_ids else None
+    except Exception as e:
+        logger.error(f"Error reading agent tasks for latest ID: {e}")
+        return None
 
-    if GRAPH_FILE.exists():
-        logger.info(f"Graph file found: {GRAPH_FILE}")
 
-        content = GRAPH_FILE.read_text()
+def load_graph_data(task_id: int | None = None):
+    if task_id is None:
+        task_id = get_latest_task_id_from_json()
+
+    filename = f"project_interaction_map-id-{task_id}.html" if task_id is not None else "project_interaction_map.html"
+    
+    target_file = DATA_DIR / filename
+    logger.info(f"Loading graph data (task_id={task_id}) from {target_file}...")
+
+    if target_file.exists():
+        logger.info(f"Graph file found: {target_file}")
+        content = target_file.read_text()
         
         nodes_match = re.search(r'nodes\s*=\s*new\s*vis\.DataSet\((.*?)\);', content, re.DOTALL)
         edges_match = re.search(r'edges\s*=\s*new\s*vis\.DataSet\((.*?)\);', content, re.DOTALL)
@@ -75,18 +93,22 @@ def load_graph_data():
         logger.info(f"Graph data loaded successfully: {len(nodes)} nodes, {len(edges)} edges")
         return {"nodes": nodes, "edges": edges}
 
-    logger.warning(f"Graph file not found: {GRAPH_FILE}")
+    logger.warning(f"Graph file not found: {target_file}")
     return {"nodes": [], "edges": []}
 
 
-def load_metrics():
+def load_metrics(task_id: int | None = None):
+    if task_id is None:
+        task_id = get_latest_task_id_from_json()
 
-    file = DATA_DIR / "metrics.json"
+    filename = f"metrics-id-{task_id}.json" if task_id is not None else "metrics.json"
+        
+    file = DATA_DIR / filename
 
-    logger.info(f"Loading metrics from {file}")
+    logger.info(f"Loading metrics (task_id={task_id}) from {file}")
 
     if not file.exists():
-        logger.warning("metrics.json not found")
+        logger.warning(f"Metrics file not found: {file}")
         return []
 
     try:
@@ -96,6 +118,16 @@ def load_metrics():
     except Exception as e:
         logger.error(f"Error reading metrics: {e}")
         return []
+
+
+@app.get("/api/metrics/{task_id}")
+def get_metrics_version(task_id: int):
+    return load_metrics(task_id)
+
+
+@app.get("/api/graph/{task_id}")
+def get_graph_version(task_id: int):
+    return load_graph_data(task_id)
 
 def load_agent_tasks():
     file = DATA_DIR / "tasks-agent.json"

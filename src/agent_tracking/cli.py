@@ -24,6 +24,16 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 
+def get_latest_task_id(conv_id: str | None = None) -> int:
+    """Gets the latest task ID from tasks-agent.json."""
+    cid = conv_id or get_current_session_id()
+    if not cid:
+        return 0
+    store = ChatStore()
+    last_task = store.get_last_task(cid)
+    return last_task.id if last_task and last_task.id is not None else 0
+
+
 def run_visualize(source: Path, output_dir: Path, show: bool):
     """Génère les graphiques de santé du code."""
     ensure_dir(output_dir)
@@ -36,14 +46,18 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
         print("Aucun fichier Python trouvé.")
         return 1
 
-    # sauver dataset
-    json_file = output_dir / "metrics.json"
-    df_real.to_json(json_file, orient="records")
+    # Task ID for versioning
+    tid = get_latest_task_id()
+    
+    # Versioned filenames
+    json_versioned = output_dir / f"metrics-id-{tid}.json"
+    png_versioned = output_dir / f"hotspots-id-{tid}.png"
 
-    generate_hotspot_scatter(
-        df_real, save_path=output_dir / "hotspots.png", show=show)
+    # Save versioned
+    df_real.to_json(json_versioned, orient="records")
+    generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
 
-    print(f"Graphiques sauvegardés dans {output_dir}")
+    print(f"Graphiques sauvegardés avec ID {tid} dans {output_dir}")
     return 0
 
 
@@ -53,11 +67,14 @@ def run_map(source: Path, output_dir: Path):
 
     print(f"Génération de la carte d'interaction pour {source}")
 
+    tid = get_latest_task_id()
     analyzer = GlobalProjectAnalyzer(root_dir=source, output_dir=output_dir)
 
     analyzer.scan_project()
     analyzer.analyze_interactions()
-    analyzer.generate_graph()
+    
+    # Versioned only
+    analyzer.generate_graph(filename=f"project_interaction_map-id-{tid}.html")
 
     return 0
 
