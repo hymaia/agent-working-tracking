@@ -20,27 +20,6 @@ echo "Source analysée : $SRC"
 echo "Folder de destination : $VISUALS"
 echo
 
-# -----------------------------
-# UML ANALYSIS
-# -----------------------------
-echo "Analyse UML..."
-poetry -C "$PROJECT_ROOT" run agent-tracking analyze \
-    --source "$SRC" \
-    --output "$DIAGRAMS" \
-    -v
-
-echo
-
-# récupérer le dernier diagramme généré
-LATEST_DIAGRAM=$(ls -t "$DIAGRAMS"/*.drawio | head -n 1)
-
-echo "Conversion du diagramme UML en PNG..."
-poetry -C "$PROJECT_ROOT" run agent-tracking inspect \
-    "$LATEST_DIAGRAM" \
-    --png \
-    --outdir "$VISUALS"
-
-echo
 
 # -----------------------------
 # CODE HEALTH VISUALIZATION
@@ -55,10 +34,18 @@ echo
 # -----------------------------
 # PROJECT INTERACTION MAP
 # -----------------------------
-echo "🕸 Génération de la carte d'interactions..."
+echo "Génération de la carte d'interactions..."
 poetry -C "$PROJECT_ROOT" run agent-tracking map \
     --source "$SRC" \
     --output-dir "$VISUALS"
 
+echo
+echo "Analyse terminée"
+
+# -----------------------------
+# AGENT INTERACTION
+# -----------------------------
+echo "Génération des interactions avec l'agent..."
+poetry -C "$PROJECT_ROOT" run agent-tracking track
 echo
 echo "Analyse terminée"

@@ -62,5 +62,13 @@
     "effectuated": "- [x] Refine Task Parsing to \"Big Blocks\" <!-- id: 26 -->\n- [x] Update `sync_last_task` to group sub-tasks <!-- id: 27 -->\n- [x] Verify block-based syncing in JSON <!-- id: 28 -->",
     "files_modified": [],
     "created_at": "2026-03-09T15:15:16.278881+00:00"
+  },
+  {
+    "id": 29,
+    "conversation_id": "c759990d-fe51-470a-bf0c-3c94b995dcf9",
+    "asked": "Rename Application | Integrate Task Data into Dashboard",
+    "effectuated": "- [x] Integrate Task Data into Dashboard <!-- id: 29 -->\n- [x] Update `server.py` to serve `tasks-agent.json` <!-- id: 30 -->\n- [x] Update `index.html` with sidebar for tasks <!-- id: 31 -->\n- [x] Update `app.js` to render tasks with deduplication <!-- id: 32 -->\n- [x] Update `style.css` for sidebar layout <!-- id: 33 -->\n- [x] Refine layout for side-by-side graphs <!-- id: 34 -->\n- [x] Enhance graph responsiveness (stacking & height) <!-- id: 35 -->",
+    "files_modified": [],
+    "created_at": "2026-03-09T16:11:52.022842+00:00"
   }
 ]
