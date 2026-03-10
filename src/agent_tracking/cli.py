@@ -52,10 +52,18 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
     # Versioned filenames
     json_versioned = output_dir / f"metrics-id-{tid}.json"
     png_versioned = output_dir / f"hotspots-id-{tid}.png"
+    
+    # Main filenames for dashboard
+    json_main = output_dir / "metrics.json"
+    png_main = output_dir / "hotspots.png"
 
     # Save versioned
     df_real.to_json(json_versioned, orient="records")
     generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
+    
+    # Save main
+    df_real.to_json(json_main, orient="records")
+    generate_hotspot_scatter(df_real, save_path=png_main, show=False)
 
     print(f"Graphiques sauvegardés avec ID {tid} dans {output_dir}")
     return 0
@@ -73,8 +81,9 @@ def run_map(source: Path, output_dir: Path):
     analyzer.scan_project()
     analyzer.analyze_interactions()
     
-    # Versioned only
+    # Versioned and main
     analyzer.generate_graph(filename=f"project_interaction_map-id-{tid}.html")
+    analyzer.generate_graph(filename="project_interaction_map.html")
 
     return 0
 

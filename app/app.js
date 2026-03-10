@@ -4,10 +4,20 @@ let interactionNetwork = null;
 function loadMetrics(providedData = null) {
   console.log("Loading metrics...");
   const data = providedData || window.metrics || [];
+  let ctx = document.getElementById("hotspotChart");
+  const card = ctx ? ctx.closest(".card") : null;
+
   if (!Array.isArray(data) || !data.length) {
     console.warn("No metrics to display");
+    if (card) card.classList.add("hidden");
+    if (hotspotChart) {
+      hotspotChart.destroy();
+      hotspotChart = null;
+    }
     return;
   }
+
+  if (card) card.classList.remove("hidden");
 
   const dataset = data.map(d => ({
     x: Number(d.churn) || 0,
@@ -16,7 +26,6 @@ function loadMetrics(providedData = null) {
     loc: d.loc
   }));
 
-  const ctx = document.getElementById("hotspotChart");
   if (!ctx) { console.error("Canvas hotspotChart not found"); return; }
 
   Chart.defaults.color = "#475569";
@@ -65,14 +74,19 @@ function loadNetwork(providedData = null) {
   const container = document.getElementById("interactionNetwork");
   const dataRaw = providedData || window.graphData;
 
+  const card = container ? container.closest(".card") : null;
+
   if (!container || !dataRaw || !dataRaw.nodes || !dataRaw.edges || !dataRaw.nodes.length) {
     console.warn("No graph data to display or container missing");
+    if (card) card.classList.add("hidden");
     if (interactionNetwork) {
-        interactionNetwork.destroy();
-        interactionNetwork = null;
+      interactionNetwork.destroy();
+      interactionNetwork = null;
     }
     return;
   }
+
+  if (card) card.classList.remove("hidden");
 
   const nodesArr = dataRaw.nodes.map(n => ({
     ...n,
@@ -116,26 +130,26 @@ function loadNetwork(providedData = null) {
 }
 
 async function selectTask(taskId, element) {
-    console.log(`Selecting task: ${taskId}`);
-    
-    // UI Feedback
-    document.querySelectorAll('.task-item').forEach(el => el.classList.remove('active'));
-    if (element) element.classList.add('active');
+  console.log(`Selecting task: ${taskId}`);
 
-    try {
-        const [metricsRes, graphRes] = await Promise.all([
-            fetch(`/api/metrics/${taskId}`),
-            fetch(`/api/graph/${taskId}`)
-        ]);
+  // UI Feedback
+  document.querySelectorAll('.task-item').forEach(el => el.classList.remove('active'));
+  if (element) element.classList.add('active');
 
-        const metricsData = await metricsRes.json();
-        const graphData = await graphRes.json();
+  try {
+    const [metricsRes, graphRes] = await Promise.all([
+      fetch(`/api/metrics/${taskId}`),
+      fetch(`/api/graph/${taskId}`)
+    ]);
 
-        loadMetrics(metricsData);
-        loadNetwork(graphData);
-    } catch (e) {
-        console.error("Error fetching versioned data:", e);
-    }
+    const metricsData = await metricsRes.json();
+    const graphData = await graphRes.json();
+
+    loadMetrics(metricsData);
+    loadNetwork(graphData);
+  } catch (e) {
+    console.error("Error fetching versioned data:", e);
+  }
 }
 
 function loadAgentTasks() {

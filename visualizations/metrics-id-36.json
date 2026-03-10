@@ -1,8 +1,8 @@
 [
     {
         "filename": "papaga_ia\/constants.py",
-        "churn": 6,
-        "complexity": 0.0,
+        "churn": 3,
+        "complexity": 1.0,
         "loc": 26
     },
     {
@@ -13,14 +13,14 @@
     },
     {
         "filename": "papaga_ia\/test.py",
-        "churn": 2,
-        "complexity": 1.8888888889,
+        "churn": 5,
+        "complexity": 5.8888888889,
         "loc": 206
     },
     {
         "filename": "papaga_ia\/cli.py",
-        "churn": 5,
-        "complexity": 1.0,
+        "churn": 7,
+        "complexity": 5.0,
         "loc": 39
     },
     {
