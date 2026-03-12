@@ -1,0 +1,12 @@
+{
+	"hooks": {
+		"Stop": [
+			{
+				"type": "command",
+				"command": "./generate-diagrams.sh",
+				"description": "Run full agent-tracking analysis (hotspots, map, track) using the analysis script",
+				"enabled": true
+			}
+		]
+	}
+}

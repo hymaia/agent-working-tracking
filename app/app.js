@@ -1,6 +1,11 @@
 let hotspotChart = null;
 let interactionNetwork = null;
 
+// Log active config on load
+if (window.envConfig) {
+  console.info(`[agent-tracking] ENV_IDE=${window.envConfig.env_ide} | AGENT_CONV_ID=${window.envConfig.conv_id}`);
+}
+
 function loadMetrics(providedData = null) {
   console.log("Loading metrics...");
   const data = providedData || window.metrics || [];

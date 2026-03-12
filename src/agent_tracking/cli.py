@@ -5,6 +5,7 @@ Contains both code analysis tools and agent task logging.
 
 from __future__ import annotations
 import json
+import os
 import sys
 from pathlib import Path
 import argparse
@@ -12,7 +13,9 @@ import argparse
 # Imports locaux
 from .visualization import analyze_local_codebase, generate_hotspot_scatter
 from .network import GlobalProjectAnalyzer
-from .chat_interceptor import ChatStore, get_current_session_id
+from .antigravity_interceptor import ChatStore, get_current_session_id
+from .claude_interceptor import ClaudeStore, get_current_session_id as get_claude_session_id
+from .utils import get_last_task
 
 
 DEFAULT_SOURCE = Path("/Users/houee/Desktop/papaga-ia/papaga-ia/papaga_ia")
@@ -24,13 +27,24 @@ def ensure_dir(path: Path) -> Path:
     return path
 
 
-def get_latest_task_id(conv_id: str | None = None) -> int:
-    """Gets the latest task ID from tasks-agent.json."""
-    cid = conv_id or get_current_session_id()
-    if not cid:
+def get_latest_task_id(conv_id: str | None = None, output_dir: Path = Path("visualizations")) -> int:
+    """Gets the latest task ID.
+
+    When ENV_IDE=claude-code, reads the last id from conversation-history.json.
+    Otherwise uses the appropriate store (auto-detected via ENV_IDE).
+    """
+    if os.getenv("ENV_IDE", "").lower() == "claude-code":
+        history_file = output_dir / "conversation-history.json"
+        if history_file.exists():
+            try:
+                tasks = json.loads(history_file.read_text())
+                if tasks:
+                    return tasks[-1]["id"]
+            except Exception:
+                pass
         return 0
-    store = ChatStore()
-    last_task = store.get_last_task(cid)
+
+    last_task = get_last_task(conv_id)
     return last_task.id if last_task and last_task.id is not None else 0
 
 
@@ -47,24 +61,16 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
         return 1
 
     # Task ID for versioning
-    tid = get_latest_task_id()
+    tid = get_latest_task_id(output_dir=output_dir)
     
     # Versioned filenames
     json_versioned = output_dir / f"metrics-id-{tid}.json"
     png_versioned = output_dir / f"hotspots-id-{tid}.png"
     
-    # Main filenames for dashboard
-    json_main = output_dir / "metrics.json"
-    png_main = output_dir / "hotspots.png"
-
     # Save versioned
     df_real.to_json(json_versioned, orient="records")
-    generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
+    #generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
     
-    # Save main
-    df_real.to_json(json_main, orient="records")
-    generate_hotspot_scatter(df_real, save_path=png_main, show=False)
-
     print(f"Graphiques sauvegardés avec ID {tid} dans {output_dir}")
     return 0
 
@@ -75,7 +81,7 @@ def run_map(source: Path, output_dir: Path):
 
     print(f"Génération de la carte d'interaction pour {source}")
 
-    tid = get_latest_task_id()
+    tid = get_latest_task_id(output_dir=output_dir)
     analyzer = GlobalProjectAnalyzer(root_dir=source, output_dir=output_dir)
 
     analyzer.scan_project()
@@ -83,7 +89,6 @@ def run_map(source: Path, output_dir: Path):
     
     # Versioned and main
     analyzer.generate_graph(filename=f"project_interaction_map-id-{tid}.html")
-    analyzer.generate_graph(filename="project_interaction_map.html")
 
     return 0
 
@@ -110,6 +115,27 @@ def run_track(conv_id: str | None) -> int:
     return 0
 
 
+def run_history(output_dir: Path) -> int:
+    """Export Claude Code conversation history for the current session."""
+    store = ClaudeStore()
+
+    session_id = None
+    current = get_claude_session_id()
+    if current:
+        _, session_id = current
+    else:
+        print("Could not detect current session, exporting all.")
+
+    messages = store.get_messages(session_id=session_id)
+    if not messages:
+        print("No messages found.")
+        return 0
+
+    store.export(output_dir, session_id=session_id)
+    print(f"{len(messages)} message(s) exported.")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(
         description="Outil d'analyse Agent-Tracking & Draw.io Toolset"
@@ -129,9 +155,10 @@ def main() -> int:
     map_cmd.add_argument("--output-dir", type=Path,
                          default=Path("visualizations"))
 
-    # --- track (Agent Tracking) ---
-    track = sub.add_parser("track", help="Sync agent task progress")
-    track.add_argument("--conv-id", default=None)
+    # --- history (unified: antigravity=track, claudecode=history) ---
+    history = sub.add_parser("history", help="Sync agent tasks (antigravity) or export conversation history (claudecode)")
+    history.add_argument("--conv-id", default=None, help="Conversation ID (antigravity only, auto-detected if omitted)")
+    history.add_argument("--output-dir", type=Path, default=Path("visualizations"))
 
     args = parser.parse_args()
 
@@ -143,8 +170,12 @@ def main() -> int:
         elif args.command == "map":
             return run_map(args.source, args.output_dir)
 
-        elif args.command == "track":
-            return run_track(args.conv_id)
+        elif args.command == "history":
+            env_ide = os.getenv("ENV_IDE", "").lower()
+            if env_ide == "antigravity":
+                return run_track(args.conv_id)
+            else:
+                return run_history(args.output_dir)
 
         return 0
 

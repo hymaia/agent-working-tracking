@@ -1,0 +1,50 @@
+[
+  {
+    "id": 0,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "i want to mix and keep only one command between tack and hitory in cli.py. i want when the ENV_IDE is antigravity use the logique related to run_track function and when the var env is claudecode use the run_history logique functioN;the new command will be named history",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T08:24:40.791Z"
+  },
+  {
+    "id": 1,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "peux tu ajouter de la log pour savoir ou est enrigsitré le json de du fichier claude_interceptor.py",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T08:35:02.420Z"
+  },
+  {
+    "id": 2,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "tu arrives à bien récupérer les tasks mais le json ne s'écit pas ? peux tu écrire le json avec aussi dans le nom l'id de la conv (que cxa soit pour claudecode ou antigravity)",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T08:39:14.725Z"
+  },
+  {
+    "id": 3,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "can you change in @app/ folder whern ENV_IDE is antgravity use tasks-agents.json to display our results on the side bar of the task and when ENV_IDE is claudecode is conversation-history-<actula conversationid> so implement also a functionality where its more simple (maybe create a new var env when we get it with pyton ?)",
+    "effectuated": "Let me read all the app files first.",
+    "files_modified": [],
+    "created_at": "2026-03-12T08:50:41.027Z"
+  },
+  {
+    "id": 4,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "in the cli.py, can you reduce useless command for history ? i want to keep the project simple",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T09:16:00.744Z"
+  },
+  {
+    "id": 5,
+    "conversation_id": "7e15c718-a47d-4fde-bf9c-a7cd7edb1819",
+    "asked": "i want yo add a stop hook and run the generate-diagrams.sh command after all stop by claude can you add it ?",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T09:32:20.597Z"
+  }
+]

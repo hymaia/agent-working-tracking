@@ -24,6 +24,40 @@ poetry install
 bash generate-diagrams.sh
 ```
 
+### Interactive Dashboard
+
+The project includes an interactive dashboard to visualize agent tracking data, including cyclomatic complexity metrics and relationship graphs.
+
+To run the dashboard:
+
+1. Navigate to the `app` directory:
+   ```bash
+   cd app
+   ```
+
+2. Start the FastAPI server using Uvicorn:
+   ```bash
+   uvicorn server:app --reload
+   ```
+
+3. Open your browser and navigate to `http://127.0.0.1:8000`.
+
+
+## Analysis Script (`generate-diagrams.sh`)
+
+The `generate-diagrams.sh` script is the central entry point for running all analysis and visualization tools. It automates the following steps:
+
+1.  **Code Health Hotspots**: Runs `agent-tracking visualize` to identify complex and frequently modified code areas.
+2.  **Project Interaction Map**: Runs `agent-tracking map` to generate a high-level overview of component relationships.
+3.  **Agent Interaction Tracking**: Runs `agent-tracking track` to record and visualize agent actions over time.
+
+All generated visualizations and logs are stored in the `visualizations/` directory.
+
+To run the full analysis:
+```bash
+bash generate-diagrams.sh
+```
+
 
 ## Code Analysis & UML Generation
 

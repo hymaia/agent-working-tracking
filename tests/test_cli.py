@@ -1,8 +1,10 @@
 """Tests for CLI functionality."""
 
 from pathlib import Path
+import json
+import pytest
 
-from agent_tracking.cli import analyze_codebase
+from agent_tracking import cli
 
 
 SAMPLE_CODE = """
@@ -25,102 +27,88 @@ pass
 """
 
 
-def test_analyze_codebase(tmp_path: Path) -> None:
-    """Test codebase analysis and diagram generation."""
-    # Create sample Python files
-    src_dir = tmp_path / "src"
-    src_dir.mkdir()
-    (src_dir / "sample.py").write_text(SAMPLE_CODE)
-
-    output_dir = tmp_path / "diagrams"
-    output_dir.mkdir()
-
-    classes, output_path = analyze_codebase(src_dir, output_dir, verbose=False)
-
-    # Verify analysis results
-    assert "TestClass" in classes
-    assert "AnotherClass" in classes
-    assert len(classes["TestClass"].methods) == 2
-    assert len(classes["AnotherClass"].methods) == 1
-
-    # Verify diagram file was created
-    assert output_path.exists()
-    assert output_path.suffix == ".drawio"
-    content = output_path.read_text()
-    assert "TestClass" in content
-    assert "AnotherClass" in content
-
-
 def test_cli_visualize(tmp_path: Path, monkeypatch) -> None:
     """Test the CLI visualize subcommand writes output files."""
+    source = tmp_path / "src"
+    source.mkdir()
+    (source / "sample.py").write_text(SAMPLE_CODE)
+    
     dest = tmp_path / "figs"
     monkeypatch.chdir(tmp_path)
+    # Mock get_latest_task_id to return 0 for consistent filenames
+    monkeypatch.setattr(cli, "get_latest_task_id", lambda: 0)
     # simulate arguments
     monkeypatch.setattr(
         "sys.argv",
-        ["agent-tracking", "visualize", "--output-dir", str(dest), "--no-show"],
+        ["agent-tracking", "visualize", "--source", str(source), "--output-dir", str(dest), "--no-show"],
     )
-    from agent_tracking import cli
 
     result = cli.main()
     assert result == 0
-    assert (dest / "hotspots.png").exists()
-    assert (dest / "quality.png").exists()
-    assert (dest / "evolution.png").exists()
+    # The output filename includes the task ID, which is 0 by default
+    assert (dest / "metrics-id-0.json").exists()
 
 
-def test_analyze_codebase_empty_directory(tmp_path: Path) -> None:
-    """Test analysis of directory with no classes."""
-    src_dir = tmp_path / "src"
-    src_dir.mkdir()
-    (src_dir / "empty.py").write_text(EMPTY_CODE)
-
-    output_dir = tmp_path / "diagrams"
-    output_dir.mkdir()
-
-    classes, output_path = analyze_codebase(src_dir, output_dir, verbose=False)
-
-    # Should return empty dict for no classes
-    assert len(classes) == 0
-    assert output_path.exists()
-
-
-def test_analyze_codebase_verbose(tmp_path: Path, capsys) -> None:
-    """Test codebase analysis with verbose output."""
-    src_dir = tmp_path / "src"
-    src_dir.mkdir()
-    (src_dir / "sample.py").write_text(SAMPLE_CODE)
-
-    output_dir = tmp_path / "diagrams"
-    output_dir.mkdir()
-
-    classes, output_path = analyze_codebase(src_dir, output_dir, verbose=True)
-
-    # Capture output
-    captured = capsys.readouterr()
-    assert "Analyzing" in captured.out
-    assert "Found" in captured.out
-    assert "Diagram saved" in captured.out
-    assert len(classes) == 2
+def test_cli_map(tmp_path: Path, monkeypatch) -> None:
+    """Test the CLI map subcommand."""
+    source = tmp_path / "src"
+    source.mkdir()
+    (source / "app.py").write_text("class MyApp: pass")
+    
+    dest = tmp_path / "visuals"
+    monkeypatch.chdir(tmp_path)
+    # Mock get_latest_task_id to return 0 for consistent filenames
+    monkeypatch.setattr(cli, "get_latest_task_id", lambda: 0)
+    
+    monkeypatch.setattr(
+        "sys.argv",
+        ["agent-tracking", "map", "--source", str(source), "--output-dir", str(dest)],
+    )
+    
+    result = cli.main()
+    assert result == 0
+    # GlobalProjectAnalyzer generates project_interaction_map-id-0.html by default if no tasks
+    assert (dest / "project_interaction_map-id-0.html").exists()
 
 
-def test_analyze_codebase_nested_files(tmp_path: Path) -> None:
-    """Test analysis of nested Python files."""
-    src_dir = tmp_path / "src"
-    src_dir.mkdir()
-    (src_dir / "main.py").write_text(SAMPLE_CODE)
+def test_cli_track(tmp_path: Path, monkeypatch) -> None:
+    """Test the CLI track subcommand."""
+    # Setup mock brain dir
+    brain_dir = tmp_path / "brain"
+    brain_dir.mkdir()
+    conv_id = "test-conv-id"
+    conv_dir = brain_dir / conv_id
+    conv_dir.mkdir()
+    
+    # Create a dummy task.md with one task with ID and one without
+    task_md = conv_dir / "task.md"
+    task_md.write_text("# Task: Test Conversation\n\n- [x] Task With ID <!-- id: 1 -->\n    details 1\n- [x] Task Without ID\n    details 2\n")
+    
+    # Mock BRAIN_DIR in chat_interceptor
+    from agent_tracking import chat_interceptor
+    monkeypatch.setattr(chat_interceptor, "BRAIN_DIR", brain_dir)
+    
+    # Mock the tasks file path to avoid writing to the real visualizations dir
+    tasks_file = tmp_path / "tasks-agent.json"
+    monkeypatch.setattr(chat_interceptor.ChatStore, "_tasks_file", lambda self: tasks_file)
+    
+    monkeypatch.setattr(
+        "sys.argv",
+        ["agent-tracking", "track", "--conv-id", conv_id],
+    )
+    
+    result = cli.main()
+    assert result == 0
+    
+    # Verify tasks-agent.json was created/updated
+    assert tasks_file.exists()
+    content = json.loads(tasks_file.read_text())
+    assert any(t["asked"] == "Test Conversation | Task With ID" for t in content)
+    assert any(t["asked"] == "Test Conversation | Task Without ID" for t in content)
+    assert len(content) == 2
 
-    nested_dir = src_dir / "submodule"
-    nested_dir.mkdir()
-    (nested_dir / "module.py").write_text("class NestedClass:\n    pass")
-
-    output_dir = tmp_path / "diagrams"
-    output_dir.mkdir()
-
-    classes, output_path = analyze_codebase(src_dir, output_dir, verbose=False)
-
-    # Should find classes from both main and nested files
-    assert "TestClass" in classes
-    assert "AnotherClass" in classes
-    assert "NestedClass" in classes
-    assert output_path.exists()
+    # Run again to ensure no duplicates
+    result = cli.main()
+    assert result == 0
+    content_after = json.loads(tasks_file.read_text())
+    assert len(content_after) == 2

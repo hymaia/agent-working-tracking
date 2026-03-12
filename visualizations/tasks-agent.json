@@ -5,7 +5,7 @@
     "asked": "Rename Application | Rename application to \"Agent Dashboard Tracking\"",
     "effectuated": "- [x] Rename application to \"Agent Dashboard Tracking\" <!-- id: 0 -->\n- [x] Update `app/index.html` title and header <!-- id: 1 -->\n- [x] Update `app/server.py` FastAPI title <!-- id: 2 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460062+00:00"
+    "created_at": "2026-03-10T15:23:06.473058+00:00"
   },
   {
     "id": 3,
@@ -13,7 +13,7 @@
     "asked": "Rename Application | Verify changes",
     "effectuated": "- [x] Verify changes <!-- id: 3 -->\n- [x] Check `index.html` rendered content <!-- id: 4 -->\n- [x] Check FastAPI documentation or app title <!-- id: 5 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460367+00:00"
+    "created_at": "2026-03-10T15:23:06.473817+00:00"
   },
   {
     "id": 6,
@@ -21,7 +21,7 @@
     "asked": "Rename Application | Update `chat_interceptor.py` to log tasks",
     "effectuated": "- [x] Update `chat_interceptor.py` to log tasks <!-- id: 6 -->\n- [x] Implement `sync_last_task` logic <!-- id: 7 -->\n- [x] Verify DB insertion <!-- id: 8 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460494+00:00"
+    "created_at": "2026-03-10T15:23:06.473954+00:00"
   },
   {
     "id": 9,
@@ -29,7 +29,7 @@
     "asked": "Rename Application | Display analyzed repository in dashboard",
     "effectuated": "- [x] Display analyzed repository in dashboard <!-- id: 9 -->\n- [x] Create `.env` file <!-- id: 10 -->\n- [x] Update `app/server.py` to read `.env` <!-- id: 11 -->\n- [x] Update `app/index.html` header <!-- id: 12 -->\n- [x] Verify display on dashboard <!-- id: 13 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460604+00:00"
+    "created_at": "2026-03-10T15:23:06.474151+00:00"
   },
   {
     "id": 14,
@@ -37,7 +37,7 @@
     "asked": "Rename Application | Refactor Chat Interceptor to JSON",
     "effectuated": "- [x] Refactor Chat Interceptor to JSON <!-- id: 14 -->\n- [x] Update `chat_interceptor.py` to use JSON <!-- id: 15 -->\n- [x] Update `cli.py` to adapt task commands <!-- id: 16 -->\n- [x] Verify JSON storage and CLI output <!-- id: 17 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460706+00:00"
+    "created_at": "2026-03-10T15:23:06.474276+00:00"
   },
   {
     "id": 18,
@@ -45,7 +45,7 @@
     "asked": "Rename Application | Simplify CLI for Agent Tracking",
     "effectuated": "- [x] Simplify CLI for Agent Tracking <!-- id: 18 -->\n- [x] Remove old task commands from `cli.py` <!-- id: 19 -->\n- [x] Implement `track` command <!-- id: 20 -->\n- [x] Verify `track` command functionality <!-- id: 21 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460801+00:00"
+    "created_at": "2026-03-10T15:23:06.474377+00:00"
   },
   {
     "id": 22,
@@ -53,7 +53,7 @@
     "asked": "Rename Application | Adapt Task Parsing Logic",
     "effectuated": "- [x] Adapt Task Parsing Logic <!-- id: 22 -->\n- [x] Extract conversation name from first line <!-- id: 23 -->\n- [x] Sync each completed bullet point separately <!-- id: 24 -->\n- [x] Use `<!-- id: ... -->` for deduplication <!-- id: 25 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460890+00:00"
+    "created_at": "2026-03-10T15:23:06.474472+00:00"
   },
   {
     "id": 26,
@@ -61,7 +61,7 @@
     "asked": "Rename Application | Refine Task Parsing to \"Big Blocks\"",
     "effectuated": "- [x] Refine Task Parsing to \"Big Blocks\" <!-- id: 26 -->\n- [x] Update `sync_last_task` to group sub-tasks <!-- id: 27 -->\n- [x] Verify block-based syncing in JSON <!-- id: 28 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.460979+00:00"
+    "created_at": "2026-03-10T15:23:06.474658+00:00"
   },
   {
     "id": 29,
@@ -69,7 +69,7 @@
     "asked": "Rename Application | Integrate Task Data into Dashboard",
     "effectuated": "- [x] Integrate Task Data into Dashboard <!-- id: 29 -->\n- [x] Update `server.py` to serve `tasks-agent.json` <!-- id: 30 -->\n- [x] Update `index.html` with sidebar for tasks <!-- id: 31 -->\n- [x] Update `app.js` to render tasks with deduplication <!-- id: 32 -->\n- [x] Update `style.css` for sidebar layout <!-- id: 33 -->\n- [x] Refine layout for side-by-side graphs <!-- id: 34 -->\n- [x] Enhance graph responsiveness (stacking & height) <!-- id: 35 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.461069+00:00"
+    "created_at": "2026-03-10T15:23:06.474763+00:00"
   },
   {
     "id": 36,
@@ -77,7 +77,7 @@
     "asked": "Rename Application | Version Visualizations by Task ID",
     "effectuated": "- [x] Version Visualizations by Task ID <!-- id: 36 -->\n- [x] Update `cli.py` to fetch latest task ID <!-- id: 37 -->\n- [x] Modify `run_visualize` for versioned output <!-- id: 38 -->\n- [x] Update `network.py` for flexible graph naming <!-- id: 39 -->\n- [x] Modify `run_map` for versioned output <!-- id: 40 -->\n- [x] Ensure dashboard (`server.py`) uses the most recent version <!-- id: 41 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.461220+00:00"
+    "created_at": "2026-03-10T15:23:06.474914+00:00"
   },
   {
     "id": 42,
@@ -85,6 +85,142 @@
     "asked": "Rename Application | Interactive Task History View",
     "effectuated": "- [x] Interactive Task History View <!-- id: 42 -->\n- [x] Add `/api/metrics/{task_id}` endpoint in `server.py` <!-- id: 43 -->\n- [x] Add `/api/graph/{task_id}` endpoint in `server.py` <!-- id: 44 -->\n- [x] Update `app.js` with task click listeners <!-- id: 45 -->\n- [x] Implement dynamic chart/network re-initialization <!-- id: 46 -->\n- [x] Add visual feedback (active state) in sidebar <!-- id: 47 -->",
     "files_modified": [],
-    "created_at": "2026-03-09T16:46:17.461396+00:00"
+    "created_at": "2026-03-10T15:23:06.475063+00:00"
+  },
+  {
+    "id": 48,
+    "conversation_id": "c759990d-fe51-470a-bf0c-3c94b995dcf9",
+    "asked": "Rename Application | Bug Fixes and UI Polish",
+    "effectuated": "- [x] Bug Fixes and UI Polish <!-- id: 48 -->\n- [x] Fix Chart.js naming collision and destruction logic <!-- id: 49 -->\n- [x] Add CSS `.hidden` class for card management <!-- id: 50 -->\n- [x] Hide cards in dashboard when data is missing <!-- id: 51 -->\n- [x] Update server to favor highest task ID on load <!-- id: 52 -->",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:23:06.475232+00:00"
+  },
+  {
+    "id": 49,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Create implementation plan for test updates and code cleanup",
+    "effectuated": "- [x] Create implementation plan for test updates and code cleanup",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.452312+00:00"
+  },
+  {
+    "id": 50,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Remove debug `print` statements from `cli.py` and `chat_interceptor.py`",
+    "effectuated": "- [x] Remove debug `print` statements from `cli.py` and `chat_interceptor.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.452631+00:00"
+  },
+  {
+    "id": 51,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add tests for `map` subcommand in `test_cli.py`",
+    "effectuated": "- [x] Add tests for `map` subcommand in `test_cli.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.452793+00:00"
+  },
+  {
+    "id": 52,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add tests for `track` subcommand in `test_cli.py`",
+    "effectuated": "- [x] Add tests for `track` subcommand in `test_cli.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.452935+00:00"
+  },
+  {
+    "id": 53,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Verify all tests pass",
+    "effectuated": "- [x] Verify all tests pass",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.453097+00:00"
+  },
+  {
+    "id": 54,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Update `sync_last_task` to handle missing IDs",
+    "effectuated": "- [x] Update `sync_last_task` to handle missing IDs",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.453253+00:00"
+  },
+  {
+    "id": 55,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add test case for tasks without IDs",
+    "effectuated": "- [x] Add test case for tasks without IDs",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.453379+00:00"
+  },
+  {
+    "id": 56,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Verify fix",
+    "effectuated": "- [x] Verify fix",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:45:37.453505+00:00"
+  },
+  {
+    "id": 57,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Create implementation plan for test updates and code cleanup",
+    "effectuated": "- [x] Create implementation plan for test updates and code cleanup",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.042981+00:00"
+  },
+  {
+    "id": 58,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Remove debug `print` statements from `cli.py` and `chat_interceptor.py`",
+    "effectuated": "- [x] Remove debug `print` statements from `cli.py` and `chat_interceptor.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.043372+00:00"
+  },
+  {
+    "id": 59,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add tests for `map` subcommand in `test_cli.py`",
+    "effectuated": "- [x] Add tests for `map` subcommand in `test_cli.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.043575+00:00"
+  },
+  {
+    "id": 60,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add tests for `track` subcommand in `test_cli.py`",
+    "effectuated": "- [x] Add tests for `track` subcommand in `test_cli.py`",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.043734+00:00"
+  },
+  {
+    "id": 61,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Verify all tests pass",
+    "effectuated": "- [x] Verify all tests pass",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.043885+00:00"
+  },
+  {
+    "id": 62,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Update `sync_last_task` to handle missing IDs",
+    "effectuated": "- [x] Update `sync_last_task` to handle missing IDs",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.044031+00:00"
+  },
+  {
+    "id": 63,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Add test case for tasks without IDs",
+    "effectuated": "- [x] Add test case for tasks without IDs",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.044179+00:00"
+  },
+  {
+    "id": 64,
+    "conversation_id": "dda6f904-d1fb-4f56-bbb1-624b1ac7a717",
+    "asked": "# Tasks | Verify fix",
+    "effectuated": "- [x] Verify fix",
+    "files_modified": [],
+    "created_at": "2026-03-10T15:46:27.044323+00:00"
   }
 ]

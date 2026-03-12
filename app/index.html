@@ -30,7 +30,8 @@
     <aside class="sidebar fade-in">
       <div class="sidebar-header">
         <h2>Agent Tasks</h2>
-        <span class="badge">Live History</span>
+        <span class="badge">{{ env_ide }}</span>
+        <span class="badge" style="font-size:0.65rem; opacity:0.7; word-break:break-all;">{{ conv_id }}</span>
       </div>
       <div id="taskList" class="task-list">
         <!-- Tasks will be rendered here -->
@@ -65,6 +66,7 @@
     window.metrics = {{ metrics | tojson | safe }};
     window.graphData = {{ graph_data | tojson | safe }};
     window.agentTasks = {{ agent_tasks | tojson | safe }};
+    window.envConfig = { env_ide: "{{ env_ide }}", conv_id: "{{ conv_id }}" };
   </script>
   <script src="/static/app.js" defer></script>
 

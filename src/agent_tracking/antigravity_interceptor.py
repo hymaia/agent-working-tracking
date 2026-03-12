@@ -4,9 +4,23 @@ from datetime import datetime, timezone
 from pathlib import Path
 import json
 import re
+import hashlib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  
+
+ENV_IDE = os.getenv("ENV_IDE", "").lower() 
 
 
-BRAIN_DIR = Path.home() / ".gemini" / "antigravity" / "brain"
+if ENV_IDE == "antigravity":
+    BRAIN_DIR = Path.home() / ".gemini" / "antigravity" / "brain"
+elif ENV_IDE == "vscode":
+    BRAIN_DIR = Path.home() / "Library" / "Application" / "Support" / "Code" / "User" / "workspaceStorage"
+else:
+    BRAIN_DIR = None
+
+print(f"Using brain directory: {BRAIN_DIR}")
 
 def get_current_session_id() -> str | None:
     """Heuristic to find the current conversation ID."""
@@ -42,14 +56,15 @@ class ChatStore:
     def __init__(self, brain_dir: Path | None = None) -> None:
         self._brain_dir = Path(brain_dir) if brain_dir else BRAIN_DIR
 
-    def _tasks_file(self) -> Path:
+    def _tasks_file(self, conversation_id: str) -> Path:
         BASE_DIR = Path(__file__).resolve().parent
         ROOT_DIR = BASE_DIR.parent.parent
         DATA_DIR = ROOT_DIR / "visualizations"
-        return DATA_DIR / "tasks-agent.json"
+        DATA_DIR.mkdir(parents=True, exist_ok=True)
+        return DATA_DIR / f"tasks-agent-{conversation_id}.json"
 
     def _read_tasks(self, conversation_id: str) -> list[dict[str, Any]]:
-        file = self._tasks_file()
+        file = self._tasks_file(conversation_id)
         if not file.exists():
             return []
         try:
@@ -57,9 +72,10 @@ class ChatStore:
         except Exception:
             return []
 
-    def _write_tasks(self,tasks: list[dict[str, Any]]):
-        file = self._tasks_file()
+    def _write_tasks(self, tasks: list[dict[str, Any]], conversation_id: str):
+        file = self._tasks_file(conversation_id)
         file.write_text(json.dumps(tasks, indent=2))
+        print(f"💾 JSON saved → {file.resolve()}")
 
     def log_task(self, conversation_id: str, asked: str, effectuated: str, files_modified: list[str], task_id: int | None = None) -> AgentTask:
         now = datetime.now(timezone.utc).isoformat()
@@ -69,8 +85,8 @@ class ChatStore:
         task = AgentTask(final_id, conversation_id, asked, effectuated, files_modified, now)
         
         tasks.append(task.to_dict())
-        self._write_tasks(tasks)
-        
+        self._write_tasks(tasks, conversation_id)
+
         return task
 
     def get_last_task(self, conversation_id: str) -> AgentTask | None:
@@ -85,7 +101,8 @@ class ChatStore:
         return [AgentTask(**t) for t in reversed(tasks)]
 
     def sync_last_task(self, conversation_id: str) -> list[AgentTask]:
-        """Extracts each completed 'big block' from task.md as a separate entry."""
+        """Extracts each completed 'big block' from task.md as a separate entry,
+        avoids duplicates based on ID and hash of the text."""
         task_file = self._brain_dir / conversation_id / "task.md"
 
         if not task_file.exists():
@@ -96,19 +113,17 @@ class ChatStore:
         if not lines:
             return []
 
-        # First line is conversation name
         conv_name = lines[0].replace("# Task:", "").strip()
         
         blocks = []
         current_block = None
         
+        # Parse markdown into blocks
         for line in lines[1:]:
-            # Match top-level completed bullet point: "- [x] Description <!-- id: 123 -->"
-            # No leading whitespace allowed for top-level
-            top_match = re.match(r"^- \[([xX])\] (.*?)(?:\s*<!--\s*id:\s*(\d+)\s*-->|$)", line)
-            
+            top_match = re.match(
+                r"^- \[([xX])\] (.*?)(?:\s*<!--\s*id:\s*(\d+)\s*-->|$)", line
+            )
             if top_match:
-                # If we were building a block, save it if it was completed
                 if current_block:
                     blocks.append(current_block)
                 
@@ -125,14 +140,11 @@ class ChatStore:
                 else:
                     current_block = None
             elif current_block and line.startswith("    "):
-                # Indented line - add to current block
                 current_block["lines"].append(line.strip())
             elif line.strip() == "":
-                # Empty line - just ignore or keep if in block?
                 if current_block:
                     current_block["lines"].append("")
             else:
-                # Non-indented line that isn't a new top-level task
                 if current_block:
                     blocks.append(current_block)
                     current_block = None
@@ -140,18 +152,37 @@ class ChatStore:
         if current_block:
             blocks.append(current_block)
 
+        # Lecture des tâches existantes
         existing_tasks = self._read_tasks(conversation_id)
-        existing_ids = {t["id"] for t in existing_tasks}
-        
+        existing_ids = {t["id"] for t in existing_tasks if t["id"] is not None}
+        # On calcule aussi un set des hash des contenus déjà présents
+        existing_hashes = {hashlib.sha256(t["effectuated"].encode()).hexdigest() for t in existing_tasks}
+
+        def get_next_id(existing_ids):
+            return max(existing_ids) + 1 if existing_ids else 1
+
         synced_tasks = []
+
         for b in blocks:
-            if b["id"] is None or b["id"] in existing_ids:
+            # Contenu complet du bloc
+            text_block = "\n".join(b["lines"]).strip()
+            text_hash = hashlib.sha256(text_block.encode()).hexdigest()
+
+            # Si déjà présent par hash ou par ID, on ignore
+            if (b.get("id") in existing_ids) or (text_hash in existing_hashes):
                 continue
 
-            # Log this individual block
+            # Si l'ID est None, on attribue un nouvel ID unique
+            if b.get("id") is None:
+                b["id"] = get_next_id(existing_ids)
+
             asked_field = f"{conv_name} | {b['title']}"
-            effectuated = "\n".join(b["lines"]).strip()
+            effectuated = text_block
             new_task = self.log_task(conversation_id, asked_field, effectuated, [], task_id=b["id"])
+
+            # Ajoute ID et hash pour éviter doublons suivants
+            existing_ids.add(b["id"])
+            existing_hashes.add(text_hash)
             synced_tasks.append(new_task)
 
         return synced_tasks

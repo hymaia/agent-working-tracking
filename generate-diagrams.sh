@@ -46,6 +46,6 @@ echo "Analyse terminée"
 # AGENT INTERACTION
 # -----------------------------
 echo "Génération des interactions avec l'agent..."
-poetry -C "$PROJECT_ROOT" run agent-tracking track
+poetry -C "$PROJECT_ROOT" run agent-tracking history
 echo
 echo "Analyse terminée"

@@ -1,0 +1,71 @@
+# Stop Hook
+
+### Summary
+
+This PR adds a **Stop hook** that automatically runs the full `agent-tracking` analysis pipeline via a script whenever the agent finishes execution.
+This ensures up-to-date architectural diagrams, hotspots, and agent activity tracking.
+
+### Changes
+
+Added a new hook configuration in the agent configuration file:
+
+* **Run full analysis script**
+
+  * Executes `./generate-diagrams.sh`
+  * Generates:
+
+    * UML diagrams and code hotspots
+    * Project interaction maps
+    * Agent interaction tracking
+  * Centralizes all analysis steps in a single script
+
+### Hook Configuration
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "type": "command",
+        "command": "./generate-diagrams.sh",
+        "description": "Run full agent-tracking analysis (hotspots, map, track) using the analysis script",
+        "enabled": true
+      }
+    ]
+  }
+}
+```
+
+### Why
+
+This enables:
+
+* automatic architecture documentation
+* detection of structural changes in the codebase
+* easier visualization of module dependencies
+* consistent and reproducible analysis through the script
+
+### Expected Behavior
+
+When the agent stops execution:
+
+1. The script `run-analysis.sh` runs automatically.
+2. Hotspot visualizations are generated.
+3. Project interaction maps are created.
+4. Agent activity tracking is executed.
+5. All outputs are stored in the `visualizations/` folder.
+
+### Testing
+
+* Run the agent normally.
+* Verify that `visualizations/` contains:
+
+  * code health hotspots
+  * interaction maps
+  * agent tracking logs
+
+### Future Improvements
+
+* Remove any temporary test outputs from the script once validated.
+* Integrate with CI to generate diagrams automatically on pull requests.
+* Optimize script to only regenerate diagrams if structural changes are detected.

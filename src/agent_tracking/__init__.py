@@ -2,7 +2,7 @@
 
 from .network import GlobalProjectAnalyzer
 from .visualization import generate_hotspot_scatter
-from .chat_interceptor import ChatStore
+from .antigravity_interceptor import ChatStore
 
 __version__ = "0.1.0"
 __all__ = [
