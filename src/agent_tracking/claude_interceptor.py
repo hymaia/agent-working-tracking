@@ -57,7 +57,8 @@ def _extract_paired_messages(entries: list[dict]) -> list[dict]:
     def first_assistant_text(uuid: str) -> str:
         for child in children.get(uuid, []):
             if child.get("type") == "assistant":
-                text = _extract_text(child.get("message", {}).get("content", ""))
+                text = _extract_text(
+                    child.get("message", {}).get("content", ""))
                 if text:
                     return text
                 deeper = first_assistant_text(child.get("uuid", ""))
@@ -108,7 +109,8 @@ class ClaudeStore:
 
         projects = sorted(self._dir.iterdir())
         if project:
-            projects = [p for p in projects if project.lower() in p.name.lower()]
+            projects = [p for p in projects if project.lower()
+                        in p.name.lower()]
 
         all_messages = []
         for proj in projects:

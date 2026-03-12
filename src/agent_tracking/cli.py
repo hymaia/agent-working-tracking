@@ -62,15 +62,15 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
 
     # Task ID for versioning
     tid = get_latest_task_id(output_dir=output_dir)
-    
+
     # Versioned filenames
     json_versioned = output_dir / f"metrics-id-{tid}.json"
     png_versioned = output_dir / f"hotspots-id-{tid}.png"
-    
+
     # Save versioned
     df_real.to_json(json_versioned, orient="records")
     #generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
-    
+
     print(f"Graphiques sauvegardés avec ID {tid} dans {output_dir}")
     return 0
 
@@ -86,7 +86,7 @@ def run_map(source: Path, output_dir: Path):
 
     analyzer.scan_project()
     analyzer.analyze_interactions()
-    
+
     # Versioned and main
     analyzer.generate_graph(filename=f"project_interaction_map-id-{tid}.html")
 
@@ -103,7 +103,7 @@ def run_track(conv_id: str | None) -> int:
     if not cid:
         print("Error: Could not determine conversation ID. Provide --conv-id.")
         return 1
-    
+
     store = ChatStore()
     synced = store.sync_last_task(cid)
     if synced:
@@ -163,7 +163,7 @@ def main() -> int:
     args = parser.parse_args()
 
     try:
-        
+
         if args.command == "visualize":
             return run_visualize(args.source, args.output_dir, show=not args.no_show)
 
