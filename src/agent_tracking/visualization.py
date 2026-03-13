@@ -11,7 +11,7 @@ from pathlib import Path
 def analyze_local_codebase(path: str = ".") -> pd.DataFrame:
     """Analyse le code source réel pour extraire Churn, Complexité et LOC."""
     try:
-        repo = Repo(path)
+        repo = Repo(path, search_parent_directories=True)
     except:
         repo = None
     project_dir = Path(path)
@@ -43,7 +43,8 @@ def analyze_local_codebase(path: str = ".") -> pd.DataFrame:
         # Nombre de commits impliquant ce fichier
         try:
             if repo:
-                commits = list(repo.iter_commits(paths=relative_path))
+                git_relative = file_path.relative_to(repo.working_dir)
+                commits = list(repo.iter_commits(paths=git_relative))
                 churn = len(commits)
             else:
                 churn = 0

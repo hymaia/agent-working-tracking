@@ -18,7 +18,9 @@ from .claude_interceptor import ClaudeStore, get_current_session_id as get_claud
 from .utils import get_last_task
 
 
-DEFAULT_SOURCE = Path("/Users/houee/Desktop/papaga-ia/papaga-ia/papaga_ia")
+DEFAULT_SOURCE = Path(os.getenv("ANALYZED_REPO_PATH", "."))
+DEFAULT_SOURCE_SRC = Path(
+    os.getenv("ANALYZED_REPO_PATH", ".")) / os.getenv("ANALYZED_REPO_SRC", "")
 
 
 def ensure_dir(path: Path) -> Path:
@@ -33,8 +35,15 @@ def get_latest_task_id(conv_id: str | None = None, output_dir: Path = Path("visu
     When ENV_IDE=claude-code, reads the last id from conversation-history.json.
     Otherwise uses the appropriate store (auto-detected via ENV_IDE).
     """
-    if os.getenv("ENV_IDE", "").lower() == "claude-code":
-        history_file = output_dir / "conversation-history.json"
+    if os.getenv("ENV_IDE", "").lower() == "claudecode":
+        # Try session-specific file first, then generic fallback
+        candidates = sorted(
+            output_dir.glob("conversation-history-*.json"),
+            key=lambda p: p.stat().st_mtime,
+            reverse=True,
+        )
+        history_file = candidates[0] if candidates else output_dir / \
+            "conversation-history.json"
         if history_file.exists():
             try:
                 tasks = json.loads(history_file.read_text())
@@ -69,7 +78,7 @@ def run_visualize(source: Path, output_dir: Path, show: bool):
 
     # Save versioned
     df_real.to_json(json_versioned, orient="records")
-    #generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
+    # generate_hotspot_scatter(df_real, save_path=png_versioned, show=show)
 
     print(f"Graphiques sauvegardés avec ID {tid} dans {output_dir}")
     return 0
@@ -151,14 +160,17 @@ def main() -> int:
 
     # --- map ---
     map_cmd = sub.add_parser("map", help="Carte interactions projet")
-    map_cmd.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    map_cmd.add_argument("--source", type=Path, default=DEFAULT_SOURCE_SRC)
     map_cmd.add_argument("--output-dir", type=Path,
                          default=Path("visualizations"))
 
     # --- history (unified: antigravity=track, claudecode=history) ---
-    history = sub.add_parser("history", help="Sync agent tasks (antigravity) or export conversation history (claudecode)")
-    history.add_argument("--conv-id", default=None, help="Conversation ID (antigravity only, auto-detected if omitted)")
-    history.add_argument("--output-dir", type=Path, default=Path("visualizations"))
+    history = sub.add_parser(
+        "history", help="Sync agent tasks (antigravity) or export conversation history (claudecode)")
+    history.add_argument("--conv-id", default=None,
+                         help="Conversation ID (antigravity only, auto-detected if omitted)")
+    history.add_argument("--output-dir", type=Path,
+                         default=Path("visualizations"))
 
     args = parser.parse_args()
 
@@ -182,7 +194,6 @@ def main() -> int:
     except Exception as e:
         print(f"Erreur fatale : {e}", file=sys.stderr)
         return 1
-
 
 
 if __name__ == "__main__":

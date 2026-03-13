@@ -1,0 +1,170 @@
+[
+  {
+    "id": 0,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "@app/ can you fix the side bar and add a scrollbar and to be visible on the scroll bar",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:26:52.449Z"
+  },
+  {
+    "id": 1,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you add a system on the sidebar agent task listing to choose the id i want, choose how to implement it, be simple",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:32:36.992Z"
+  },
+  {
+    "id": 2,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you fix the conversation id, its missing on the dash",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:39:25.698Z"
+  },
+  {
+    "id": 3,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "[Request interrupted by user]",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:42:05.394Z"
+  },
+  {
+    "id": 4,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you split server.py with utils_server.py to put every function utils but not concer directly fast api in utils_server.py and add a docker file in @app/ folder to deploy our app",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:43:12.718Z"
+  },
+  {
+    "id": 5,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you add on the header in @app/index.html to add a select button for task id agent ?",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:50:18.298Z"
+  },
+  {
+    "id": 6,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you integrate it more smotlhy and also there is no data in the button ? the css effect on the button is not accoridng with the general flow",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:53:37.098Z"
+  },
+  {
+    "id": 7,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you center the task id selection button, i want it more width with it wiht white background and th tetx above the button at the right part of the button",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:57:57.186Z"
+  },
+  {
+    "id": 8,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "its not working anymore",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:59:03.481Z"
+  },
+  {
+    "id": 9,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "no the css integration i asked to you its not working a",
+    "effectuated": "Let me check what the CSS actually looks like now:",
+    "files_modified": [],
+    "created_at": "2026-03-12T15:59:31.207Z"
+  },
+  {
+    "id": 10,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "its not working again i thkink there is a css conflcit",
+    "effectuated": "Let me read the full CSS to spot the conflict:",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:03:02.911Z"
+  },
+  {
+    "id": 11,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "where is my server.Py",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:05:28.268Z"
+  },
+  {
+    "id": 12,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you integrate a functionality in @app/ to relaod automaticly the json agent history to avoid the need to relaod the page every time i have new interactions",
+    "effectuated": "I'll add a `/api/tasks` endpoint and a polling loop in the frontend that refreshes the sidebar when new tasks appear.",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:08:43.559Z"
+  },
+  {
+    "id": 13,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you center <div class=\"topbar-actions\">\n      <label for=\"taskSelect\" class=\"task-select-label\">Task</label>\n      <select id=\"taskSelect\" class=\"task-select\"></select>\n    </div> this div in @app/index.html ?",
+    "effectuated": "Just a CSS change — absolute centering inside the already-positioned sticky topbar:",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:12:02.435Z"
+  },
+  {
+    "id": 14,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you put the text  <div class=\"topbar-actions\">\n      <label for=\"taskSelect\" class=\"task-select-label\">Task</label>\n      <select id=\"taskSelect\" class=\"task-select\"></select>\n    </div> here task above the button ? at the right",
+    "effectuated": "They want the whole block on the right with the label above — reverting the centering back to right-aligned:",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:17:26.268Z"
+  },
+  {
+    "id": 15,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "its not working",
+    "effectuated": "Let me read the exact current state of both files:",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:19:28.236Z"
+  },
+  {
+    "id": 16,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "with the same way of work, can you center this button and the text",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:22:06.761Z"
+  },
+  {
+    "id": 17,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "can you add a litle padding between   <h1>Agent Dashboard Tracking</h1>\n      <span class=\"badge\">Project: {{ repo_name }}</span> to have a better visualisation of the text",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:25:03.274Z"
+  },
+  {
+    "id": 18,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "reverse",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:25:37.114Z"
+  },
+  {
+    "id": 19,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "<h1>Agent Dashboard Tracking</h1>\n      <span class=\"badge\">Project: {{ repo_name }}</span> can you a space between the both",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:27:24.364Z"
+  },
+  {
+    "id": 20,
+    "conversation_id": "ef155b9b-1f70-4f1e-b998-e89933135899",
+    "asked": "fix side bar agent list there is Agent Dashboard Tracking\n\nPROJECT: {{ REPO_NAME }} here fix it",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-12T16:28:50.337Z"
+  }
+]

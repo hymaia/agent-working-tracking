@@ -22,16 +22,32 @@
   <header class="topbar">
     <div class="topbar-content">
       <h1>Agent Dashboard Tracking</h1>
-      <span class="badge" style="margin-top: 8px; display: inline-block;">Project: {{ repo_name }}</span>
+      <span class="badge" style="margin-top: 4px;">Project: {{ repo_name }}</span>
     </div>
+    <div class="topbar-actions" style="display:flex;flex-direction:column;align-items:center;gap:5px;position:absolute;left:50%;transform:translateX(-50%);">
+      <div style="display:flex;gap:8px;align-items:flex-end;">
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label for="taskSearch" class="task-select-label" style="display:block;text-align:center;">Search</label>
+          <input id="taskSearch" type="text" class="task-search" placeholder="Filter tasks…" list="taskSearchList" autocomplete="off">
+          <datalist id="taskSearchList"></datalist>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          <label for="taskSelect" class="task-select-label" style="display:block;text-align:center;">Task</label>
+          <select id="taskSelect" class="task-select"></select>
+        </div>
+      </div>
+    </div>
+          <span class="badge">AI Assistant: {{ env_ide }}</span>
+        </div>
   </header>
 
   <main class="dashboard-root">
     <aside class="sidebar fade-in">
+      <h2 class="badge">Agent Task listing</h2>
       <div class="sidebar-header">
-        <h2>Agent Tasks</h2>
-        <span class="badge">{{ env_ide }}</span>
-        <span class="badge" style="font-size:0.65rem; opacity:0.7; word-break:break-all;">{{ conv_id }}</span>
+        <div class="sidebar-header-top">
+        </div>
+       
       </div>
       <div id="taskList" class="task-list">
         <!-- Tasks will be rendered here -->
@@ -66,7 +82,6 @@
     window.metrics = {{ metrics | tojson | safe }};
     window.graphData = {{ graph_data | tojson | safe }};
     window.agentTasks = {{ agent_tasks | tojson | safe }};
-    window.envConfig = { env_ide: "{{ env_ide }}", conv_id: "{{ conv_id }}" };
   </script>
   <script src="/static/app.js" defer></script>
 

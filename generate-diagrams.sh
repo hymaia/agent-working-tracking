@@ -5,11 +5,15 @@ set -e
 # dossier où se trouve ce script
 PROJECT_ROOT=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
-# projet analysé (niveau au dessus)
-TARGET_PROJECT=$(cd "$PROJECT_ROOT/.." && pwd)
+# Load .env
+set -a
+source "$PROJECT_ROOT/.env"
+set +a
 
-SRC="$(cd "$PROJECT_ROOT/../papaga-ia/papaga-ia/papaga_ia" && pwd)"
-SRC_GIT="$(cd "$PROJECT_ROOT/../papaga-ia/papaga-ia" && pwd)"
+# projet analysé
+TARGET_PROJECT="${ANALYZED_REPO_PATH}"
+SRC_GIT="${ANALYZED_REPO_PATH}"
+SRC="${ANALYZED_REPO_PATH}/${ANALYZED_REPO_SRC}"
 DIAGRAMS="$PROJECT_ROOT/diagrams"
 VISUALS="$PROJECT_ROOT/visualizations"
 
@@ -20,6 +24,13 @@ echo "Source analysée : $SRC"
 echo "Folder de destination : $VISUALS"
 echo
 
+
+# -----------------------------
+# AGENT INTERACTION (first — sets the task ID for subsequent steps)
+# -----------------------------
+echo "Génération des interactions avec l'agent..."
+poetry -C "$PROJECT_ROOT" run agent-tracking history --output-dir "$VISUALS"
+echo
 
 # -----------------------------
 # CODE HEALTH VISUALIZATION
@@ -39,13 +50,5 @@ poetry -C "$PROJECT_ROOT" run agent-tracking map \
     --source "$SRC" \
     --output-dir "$VISUALS"
 
-echo
-echo "Analyse terminée"
-
-# -----------------------------
-# AGENT INTERACTION
-# -----------------------------
-echo "Génération des interactions avec l'agent..."
-poetry -C "$PROJECT_ROOT" run agent-tracking history
 echo
 echo "Analyse terminée"
