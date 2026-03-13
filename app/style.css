@@ -461,22 +461,6 @@ body {
 
 .quality-bar {
   grid-column: 1 / -1;
-  padding: 10px 16px;
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  justify-content: space-between;
-}
-
-.quality-bar .card-header {
-  margin-bottom: 0;
-  padding-bottom: 0;
-  border-bottom: none;
-  flex-shrink: 0;
-}
-
-.quality-bar:hover {
-  transform: none;
 }
 
 .quality-stats {
