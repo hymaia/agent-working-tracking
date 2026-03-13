@@ -12,6 +12,7 @@ from utils_server import (
     load_agent_tasks,
     load_graph_data,
     load_metrics,
+    load_quality,
     logger,
 )
 
@@ -44,6 +45,11 @@ def get_graph_version(task_id: int):
     return load_graph_data(task_id)
 
 
+@app.get("/api/quality/{task_id}")
+def get_quality_version(task_id: int):
+    return load_quality(task_id)
+
+
 @app.get("/api/tasks")
 def get_tasks():
     return load_agent_tasks()
@@ -69,6 +75,7 @@ def home(request: Request):
     metrics = load_metrics()
     graph_data = load_graph_data()
     agent_tasks = load_agent_tasks()
+    quality_data = load_quality()
     conv_id = _resolve_current_conv_id() or AGENT_CONV_ID or "—"
 
     return templates.TemplateResponse(
@@ -78,6 +85,7 @@ def home(request: Request):
             "metrics": metrics,
             "graph_data": graph_data,
             "agent_tasks": agent_tasks,
+            "quality_data": quality_data,
             "repo_name": REPO_NAME,
             "env_ide": ENV_IDE or "unknown",
             "conv_id": conv_id,

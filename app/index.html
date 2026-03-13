@@ -55,6 +55,31 @@
     </aside>
 
     <div class="main-content">
+      <section class="card fade-in quality-bar" id="qualityBar">
+        <div class="card-header">
+          <h2>Code Quality</h2>
+          <span class="badge">Metrics</span>
+        </div>
+        <div class="quality-stats">
+          <div class="stat-card">
+            <span class="stat-value" id="qFiles">—</span>
+            <span class="stat-label">Files Analyzed</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="qClean">—</span>
+            <span class="stat-label">Clean Files (ruff)</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="qViolations">—</span>
+            <span class="stat-label">Violations</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value" id="qAvgLen">—</span>
+            <span class="stat-label">Avg. Fn Length</span>
+          </div>
+        </div>
+      </section>
+
       <section class="card fade-in">
         <div class="card-header">
           <h2>Cyclomatic &amp; Git Churn Graph</h2>
@@ -82,6 +107,7 @@
     window.metrics = {{ metrics | tojson | safe }};
     window.graphData = {{ graph_data | tojson | safe }};
     window.agentTasks = {{ agent_tasks | tojson | safe }};
+    window.qualityData = {{ quality_data | tojson | safe }};
   </script>
   <script src="/static/app.js" defer></script>
 

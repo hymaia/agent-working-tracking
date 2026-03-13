@@ -30,5 +30,77 @@
     "effectuated": "I'll add a `<datalist>` linked to the search input and populate it with the same task options in JS.",
     "files_modified": [],
     "created_at": "2026-03-13T15:42:27.484Z"
+  },
+  {
+    "id": 4,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "i just add a new .py quality_metrics. I want to integrate it in the cli as the simplest way possible. follow the functionnement of the all the other cli command to get same behavior with the id",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:05:29.694Z"
+  },
+  {
+    "id": 5,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "hi can you integrate my new json of code quality juste above the both graph hospot and network. Integrate it as the more simple way to integrate it with the same css design as the initial app",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:19:29.244Z"
+  },
+  {
+    "id": 6,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "can you reduce the space in the div of quality code metrics and fix the fact that all metrics is not intergated",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:27:29.004Z"
+  },
+  {
+    "id": 7,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "can you reduce the white space inside the code quality division ?",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:31:17.544Z"
+  },
+  {
+    "id": 8,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "reverse",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:31:55.243Z"
+  },
+  {
+    "id": 9,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "can you reduce the with inside this div ? i want responsiveness and see all metric ans grapghe in my screen",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:33:06.858Z"
+  },
+  {
+    "id": 10,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "can you add an espace between code quality and metrics on thsi div ? center at the right and the other cneter on the left ? also it is possible to reduce a litle bit the size of the two graph ? hotspot and network to see all on the same screen",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:36:22.748Z"
+  },
+  {
+    "id": 11,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "can you upgrade a litel the size of the both graph ?",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:39:33.577Z"
+  },
+  {
+    "id": 12,
+    "conversation_id": "913529ac-bbaa-4491-8e11-bc1dd80773f9",
+    "asked": "<div class=\"card-header\">\n          <h2>Code Quality</h2>\n          <span class=\"badge\">Metrics</span>\n        </div> i want to put the code quality at the right and the metrics at the left of the div",
+    "effectuated": "",
+    "files_modified": [],
+    "created_at": "2026-03-13T16:40:50.984Z"
   }
 ]

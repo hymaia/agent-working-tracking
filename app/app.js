@@ -134,6 +134,14 @@ function loadNetwork(providedData = null) {
   }
 }
 
+function loadQuality(data) {
+  const d = data || window.qualityData || {};
+  document.getElementById("qFiles").textContent = d.files_analyzed ?? "—";
+  document.getElementById("qClean").textContent = d.clean_ratio != null ? `${d.clean_ratio}%` : "—";
+  document.getElementById("qViolations").textContent = d.total_violations ?? "—";
+  document.getElementById("qAvgLen").textContent = d.avg_function_length != null ? `${d.avg_function_length} ln` : "—";
+}
+
 async function selectTask(taskId, element) {
   console.log(`Selecting task: ${taskId}`);
 
@@ -146,16 +154,19 @@ async function selectTask(taskId, element) {
   if (select) select.value = taskId;
 
   try {
-    const [metricsRes, graphRes] = await Promise.all([
+    const [metricsRes, graphRes, qualityRes] = await Promise.all([
       fetch(`/api/metrics/${taskId}`),
-      fetch(`/api/graph/${taskId}`)
+      fetch(`/api/graph/${taskId}`),
+      fetch(`/api/quality/${taskId}`)
     ]);
 
     const metricsData = await metricsRes.json();
     const graphData = await graphRes.json();
+    const qualityData = await qualityRes.json();
 
     loadMetrics(metricsData);
     loadNetwork(graphData);
+    loadQuality(qualityData);
   } catch (e) {
     console.error("Error fetching versioned data:", e);
   }
@@ -332,6 +343,7 @@ async function pollTasks() {
 window.onload = () => {
   loadMetrics();
   loadNetwork();
+  loadQuality();
   loadAgentTasks();
   setInterval(pollTasks, 5000);
 };

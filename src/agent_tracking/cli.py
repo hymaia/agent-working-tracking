@@ -13,6 +13,7 @@ import argparse
 # Imports locaux
 from .visualization import analyze_local_codebase, generate_hotspot_scatter
 from .network import GlobalProjectAnalyzer
+from .quality_metrics import get_py_files, get_ruff_ratio, get_avg_function_length
 from .antigravity_interceptor import ChatStore, get_current_session_id
 from .claude_interceptor import ClaudeStore, get_current_session_id as get_claude_session_id
 from .utils import get_last_task
@@ -102,6 +103,40 @@ def run_map(source: Path, output_dir: Path):
     return 0
 
 
+def run_quality(source: Path, output_dir: Path) -> int:
+    """Génère les métriques de qualité du code (ruff + longueur fonctions)."""
+    ensure_dir(output_dir)
+
+    code_dir = str(source.resolve())
+    py_files = get_py_files(code_dir)
+    if not py_files:
+        print("Aucun fichier Python trouvé.")
+        return 1
+
+    tid = get_latest_task_id(output_dir=output_dir)
+
+    quality = get_ruff_ratio(code_dir, py_files)
+    avg_len = get_avg_function_length(py_files)
+
+    result = {
+        "task_id": tid,
+        "files_analyzed": len(py_files),
+        "clean_ratio": round(quality["clean_ratio"], 1),
+        "total_violations": quality["total_violations"],
+        "avg_function_length": round(avg_len, 1),
+    }
+
+    out_file = output_dir / f"quality-id-{tid}.json"
+    out_file.write_text(json.dumps(result, indent=2))
+
+    print(f"Fichiers analysés          : {len(py_files)}")
+    print(f"Fichiers clean (ruff)      : {quality['clean_ratio']:.1f}%")
+    print(f"Violations totales         : {quality['total_violations']}")
+    print(f"Longueur moyenne fonctions : {avg_len:.1f} lignes")
+    print(f"Résultats sauvegardés avec ID {tid} dans {out_file}")
+    return 0
+
+
 # ---------------------------------------------------------------------------
 # Agent Tracking Sync
 # ---------------------------------------------------------------------------
@@ -164,6 +199,11 @@ def main() -> int:
     map_cmd.add_argument("--output-dir", type=Path,
                          default=Path("visualizations"))
 
+    # --- quality ---
+    quality_cmd = sub.add_parser("quality", help="Métriques qualité code (ruff + longueur fonctions)")
+    quality_cmd.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    quality_cmd.add_argument("--output-dir", type=Path, default=Path("visualizations"))
+
     # --- history (unified: antigravity=track, claudecode=history) ---
     history = sub.add_parser(
         "history", help="Sync agent tasks (antigravity) or export conversation history (claudecode)")
@@ -176,7 +216,10 @@ def main() -> int:
 
     try:
 
-        if args.command == "visualize":
+        if args.command == "quality":
+            return run_quality(args.source, args.output_dir)
+
+        elif args.command == "visualize":
             return run_visualize(args.source, args.output_dir, show=not args.no_show)
 
         elif args.command == "map":

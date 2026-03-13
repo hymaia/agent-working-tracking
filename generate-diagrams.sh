@@ -51,4 +51,14 @@ poetry -C "$PROJECT_ROOT" run agent-tracking map \
     --output-dir "$VISUALS"
 
 echo
+
+# -----------------------------
+# PROJECT METRICS ANALYSE
+# -----------------------------
+echo "Génération de la carte d'interactions..."
+poetry -C "$PROJECT_ROOT" run agent-tracking quality \
+    --source "$SRC" \
+    --output-dir "$VISUALS"
+
+echo
 echo "Analyse terminée"

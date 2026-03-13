@@ -217,6 +217,25 @@ def load_metrics(task_id: int | None = None) -> list:
         return []
 
 
+def load_quality(task_id: int | None = None) -> dict:
+    if task_id is None:
+        task_id = get_latest_task_id_from_json()
+
+    filename = f"quality-id-{task_id}.json" if task_id is not None else "quality.json"
+    file = DATA_DIR / filename
+    logger.info(f"Loading quality metrics (task_id={task_id}) from {file}")
+
+    if not file.exists():
+        logger.warning(f"Quality file not found: {file}")
+        return {}
+
+    try:
+        return json.loads(file.read_text())
+    except Exception as e:
+        logger.error(f"Error reading quality metrics: {e}")
+        return {}
+
+
 def load_agent_tasks() -> list:
     f = _tasks_file()
     if not f:
