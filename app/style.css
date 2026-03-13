@@ -178,6 +178,10 @@ body {
   justify-content: space-between;
 }
 
+.sidebar > h2.badge {
+  align-self: flex-start;
+}
+
 .sidebar-header h2 {
   margin: 0;
   font-size: 18px;
